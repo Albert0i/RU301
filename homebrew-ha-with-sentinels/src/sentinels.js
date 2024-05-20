@@ -7,12 +7,13 @@ const redis = new Redis({
       { host: "127.0.0.1", port:  5002 }      
     ],
     name: "myprimary",
-    password: "123456",
-    sentinelPassword: "123456"
+    password: "123456"
   });
   
-  await redis.set("foo", "bar");
+  await redis.set("foo", "bar baz");
   console.log(await redis.get("foo"))
+  await redis.disconnect()
+
 
   /*
      ioredis
