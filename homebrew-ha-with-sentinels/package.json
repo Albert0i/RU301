@@ -1,0 +1,17 @@
+{
+  "name": "homebrew-ha-with-sentinels",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sentinels": "nodemon src/sentinels.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module", 
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ioredis": "^5.4.1"
+  }
+}
