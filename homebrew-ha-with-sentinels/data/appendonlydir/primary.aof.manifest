@@ -1,2 +1,2 @@
-file primary.aof.1.base.rdb seq 1 type b
-file primary.aof.1.incr.aof seq 1 type i
+file primary.aof.2.base.rdb seq 2 type b
+file primary.aof.2.incr.aof seq 2 type i
