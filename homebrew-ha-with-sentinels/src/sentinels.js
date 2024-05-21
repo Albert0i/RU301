@@ -6,7 +6,7 @@ const redis = new Redis({
       { host: "127.0.0.1", port:  5001 },
       { host: "127.0.0.1", port:  5002 }      
     ],
-    name: "myprimary",
+    name: "myprimary", 
     password: "123456"
   });
   
