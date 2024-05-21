@@ -9,9 +9,14 @@ const redis = new Redis({
     name: "myprimary", 
     password: "123456"
   });
-  
-  await redis.set("foo", "bar baz");
-  console.log(await redis.get("foo"))
+
+  for (let i=1; i<=120; i++) {
+    console.log(await redis.incr("counter"));
+    
+    // imitate delay 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
   await redis.disconnect()
 
 
