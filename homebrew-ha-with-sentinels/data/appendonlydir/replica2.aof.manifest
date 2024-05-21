@@ -1,2 +1,2 @@
-file replica2.aof.2.base.rdb seq 2 type b
-file replica2.aof.2.incr.aof seq 2 type i
+file replica2.aof.4.base.rdb seq 4 type b
+file replica2.aof.4.incr.aof seq 4 type i
