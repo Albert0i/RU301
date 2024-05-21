@@ -11,7 +11,13 @@ const redis = new Redis({
   });
 
   for (let i=1; i<=120; i++) {
-    console.log(await redis.incr("counter"));
+    try {
+      console.log(await redis.incr("counter"));
+    } 
+    catch (e) {
+      console.log('.');
+    }
+    
     
     // imitate delay 
     await new Promise(resolve => setTimeout(resolve, 1000));
