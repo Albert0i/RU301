@@ -5,6 +5,39 @@
 ### I. Introduction 
 
 ### II. Standalone 
+redis.conf 
+```
+# Accept connections on the specified port, default is 6379
+port 6379
+
+# all available interfaces
+bind * -::*                     
+
+# max number of simultaneous clients
+maxclients 10000
+
+# memory size in bytes  
+maxmemory 1288490188
+
+# save 3600 1 300 100 60 10000
+
+appendonly yes
+appendfilename "appendonly.aof"
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+```
+[1.5 Initial Tuning](https://redis.io/university/courses/ru301/)
+[2.1 Persistence Options in Redis](https://youtu.be/08V8KeXhZY4)
+
+[3.1 Basic Replication](https://youtu.be/-osCdf90tRA)
+[3.3 Understanding Sentinels](https://redis.io/university/courses/ru301/)
+
+[4.0 Clustering in Redis](https://youtu.be/jJMJc9QZaoA)
+
+[5.1 Data Points in Redis](https://redis.io/university/courses/ru301/)
+[5.3 Identifying Issues](https://redis.io/university/courses/ru301/)
 
 ### III. HA with Sentinels 
 
