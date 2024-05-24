@@ -54,7 +54,8 @@ appendfsync everysec
 6. [Scale with Redis Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/)
 7. [redis-windows](https://github.com/zkteco-home/redis-windows)
 8. [RedisJson](https://github.com/zkteco-home/RedisJson)
-9. [Christabel, BY SAMUEL TAYLOR COLERIDGE](https://www.poetryfoundation.org/poems/43971/christabel)
+9. [Hash Slot Resharding and Rebalancing for Redis Cluster](https://severalnines.com/blog/hash-slot-resharding-and-rebalancing-redis-cluster/)
+10. [Christabel, BY SAMUEL TAYLOR COLERIDGE](https://www.poetryfoundation.org/poems/43971/christabel)
 
 
 ### Epilogue 

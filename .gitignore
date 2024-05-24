@@ -2,7 +2,7 @@
 **/node_modules/
 target/
 __pycache__/
-*.bak
+*.baak
 *.swp
 *.log
 *.tmp

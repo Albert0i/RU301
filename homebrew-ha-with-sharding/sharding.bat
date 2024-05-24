@@ -10,10 +10,8 @@ start "7005"    /MIN redis-server ./conf/7005/redis.conf
 
 redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1 --cluster-yes
 
-
-redis-cli -p 7000 cluster nodes
-
-
-redis-cli -p 7000 cluster slots
-
+rem redis-cli -p 7000 cluster nodes
+rem redis-cli -p 7000 cluster slots
 rem redis-cli -p 7000 -c
+
+redis-cli --cluster check 127.0.0.1:7000
