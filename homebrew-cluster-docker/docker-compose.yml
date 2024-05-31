@@ -1,0 +1,126 @@
+version: "3"
+
+networks:
+  re_cluster:
+    driver: transparent
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+          gateway: "192.168.1.254"
+
+services:
+  #Node 1
+  re1:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re1
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7000:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.11
+
+  #Node 2
+  re2:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re2
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7001:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.12
+
+  #Node 3
+  re3:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re3
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7002:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.13
+
+#Node 4
+  re4:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re4
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7003:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.14
+
+#Node 5
+  re5:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re5
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7004:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.15
+
+#Node 6
+  re6:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: re6
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+      - ${CONFIG_DIR}\7005:C:\data:rw
+    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.16
+
+#
+# Windows container and static ip
+# https://forums.docker.com/t/windows-container-and-static-ip/70204
+# 
+# docker network create -d transparent --subnet=192.168.1.0/24 --gateway=192.168.1.254 tnet
+# docker run -it --name fixedhost --network tnet --ip 192.168.1.111 mcr.microsoft.com/windows/nanoserver:20H2
+#
+# Windows container networking
+# https://learn.microsoft.com/en-us/virtualization/windowscontainers/container-networking/architecture
+# 
+# EOF (2024/05/31)
+# 
