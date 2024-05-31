@@ -22,7 +22,7 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7000:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.11
@@ -39,7 +39,7 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7001:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.12
@@ -56,7 +56,7 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7002:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.13
@@ -73,7 +73,7 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7003:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.14
@@ -90,7 +90,7 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7004:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.15
@@ -107,10 +107,33 @@ services:
     volumes:
       - ${CONFIG_DIR}\conf:C:\conf:ro
       - ${CONFIG_DIR}\7005:C:\data:rw
-    command: ["redis-server", "c:\\conf\\redis.conf" ]
+    command: ["redis-server", "c:\\conf\\redis.conf"]
     networks:
       re_cluster:
         ipv4_address: 192.168.1.16
+
+#Creator
+  creator:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: creator
+    restart: unless-stopped    
+    volumes:
+      - ${CONFIG_DIR}\conf:C:\conf:ro
+    command: ["redis-server", "c:\\conf\\redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.99
+    depends_on:
+      - re1
+      - re2
+      - re3
+      - re4
+      - re5
+      - re6
 
 #
 # Windows container and static ip

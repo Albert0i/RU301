@@ -1,0 +1,17 @@
+
+# image name
+IMAGE_NAME=redis
+
+# image version
+IMAGE_VERSION=7.2.4-nanoserver-20H2
+
+# config directory 
+CONFIG_DIR=d:\RU\RU301\homebrew-cluster-docker
+
+# Users of Docker Machine on Windows should always set this.
+# Defaults to 0. Supported values: true or 1 to enable, false or 0 to disable.
+COMPOSE_CONVERT_WINDOWS_PATHS=0
+
+#
+# EOF (2024/05/29)
+#

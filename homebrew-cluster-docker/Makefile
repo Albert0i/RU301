@@ -24,9 +24,11 @@ help:
 	@echo "	logs		cluster logs"
 	@echo 
 	@echo "	create		create the cluster"
-	@echo "	cmd		docker-compose exec re1 cmd"
+	@echo "	creator		docker-compose exec creator cmd"
 	@echo "	cli 		docker-compose exec re1 redis-cli -c"
-	@echo "	info		docker-compose exec re1 redis-cli cluster info"
+	@echo "	info		docker-compose exec creator redis-cli cluster info"
+	@echo "	nodes		docker-compose exec creator redis-cli cluster nodes"
+	@echo "	slots		docker-compose exec creator redis-cli cluster slots"
 	@echo "	config		edit configuration"
 
 #
@@ -60,18 +62,18 @@ logs:
 	docker-compose logs 
 
 #
-# create the cluster (using redis-trib.rb)"
+# create the cluster
 #
 create: 
-	redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 \
-	127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 \
+	docker-compose exec creator redis-cli --cluster create 192.168.1.11:6379 192.168.1.12:6379 \
+	192.168.1.13:6379 192.168.1.14:6379 192.168.1.15:6379 192.168.1.16:6379 \
 	--cluster-replicas 1
 
 #
 # start cmd on cluster operator
 #
-cmd:
-	docker-compose exec re1 cmd
+creator:
+	docker-compose exec creator cmd
 
 #
 # start redis-cli on cluster node1
@@ -80,11 +82,29 @@ cli:
 	docker-compose exec re1 redis-cli -c 
 
 #
+# start cmd on cluster node1
+#
+cmd:
+	docker-compose exec re1 cmd
+
+#
 # cluster info
 #
 info:	
 	docker-compose exec re1 redis-cli cluster info
 	
+#
+# cluster nodes
+#
+nodes:	
+	docker-compose exec re1 redis-cli cluster nodes
+
+#
+# cluster slots
+#
+slots:	
+	docker-compose exec re1 redis-cli cluster slots
+
 #
 # edit configuration
 #
