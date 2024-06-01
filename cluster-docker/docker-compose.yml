@@ -11,8 +11,6 @@ networks:
 services:
   #Node 1
   re1:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7000:6379
@@ -28,8 +26,6 @@ services:
 
   #Node 2
   re2:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7001:6379
@@ -45,8 +41,6 @@ services:
 
   #Node 3
   re3:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7002:6379
@@ -62,8 +56,6 @@ services:
 
 #Node 4
   re4:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7003:6379
@@ -79,8 +71,6 @@ services:
 
 #Node 5
   re5:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7004:6379
@@ -96,8 +86,6 @@ services:
 
 #Node 6
   re6:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
       - 7005:6379
@@ -113,8 +101,6 @@ services:
 
 #Creator
   creator:
-    build: 
-      context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     container_name: creator
     restart: unless-stopped    
@@ -123,7 +109,25 @@ services:
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       re_cluster:
-        ipv4_address: 192.168.1.99
+        ipv4_address: 192.168.1.199
+    depends_on:
+      - re1
+      - re2
+      - re3
+      - re4
+      - re5
+      - re6
+
+# Redis Insight
+  redisinsight:
+    image: redis/redisinsight:2.50
+    container_name: redisinsight
+    ports:
+      - 5540:5540
+    restart: unless-stopped    
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.198
     depends_on:
       - re1
       - re2
