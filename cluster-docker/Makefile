@@ -35,6 +35,7 @@ help:
 #
 up:
 	docker-compose up -d --remove-orphans
+	@echo "Next, point your browser to http://localhost:5540"
 
 #
 # stop the cluster
@@ -65,8 +66,8 @@ create:
 #
 # start bash on cluster operator
 #
-re1:
-	docker-compose exec re1 bash
+creator:
+	docker-compose exec creator bash
 
 #
 # start redis-cli on cluster node1

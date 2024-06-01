@@ -125,6 +125,8 @@ services:
     ports:
       - 5540:5540
     restart: unless-stopped    
+    volumes:
+      - ./5540:/data:rw
     networks:
       re_cluster:
         ipv4_address: 192.168.1.198
@@ -139,6 +141,13 @@ services:
 #
 # redis
 # https://hub.docker.com/_/redis
+#
+# redis/redisinsight
+# https://hub.docker.com/r/redis/redisinsight
+#
+# Next, point your browser to http://localhost:5540.
+# Redis Insight also provides a health check endpoint at http://localhost:5540/api/health/ to 
+# monitor the health of the running container.
 #
 # Redis configuration file example
 # https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/
