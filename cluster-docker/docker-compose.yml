@@ -1,0 +1,143 @@
+version: "3"
+
+networks:
+  re_cluster:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+
+services:
+  #Node 1
+  re1:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7000:6379
+    container_name: re1
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7000:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.11
+
+  #Node 2
+  re2:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7001:6379
+    container_name: re2
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7001:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.12
+
+  #Node 3
+  re3:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7002:6379
+    container_name: re3
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7002:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.13
+
+#Node 4
+  re4:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7003:6379
+    container_name: re4
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7003:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.14
+
+#Node 5
+  re5:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7004:6379
+    container_name: re5
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7004:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.15
+
+#Node 6
+  re6:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7005:6379
+    container_name: re6
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7005:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.16
+
+#Creator
+  creator:
+    build: 
+      context: .
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    container_name: creator
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.99
+    depends_on:
+      - re1
+      - re2
+      - re3
+      - re4
+      - re5
+      - re6
+
+#
+# redis
+# https://hub.docker.com/_/redis
+#
+# Redis configuration file example
+# https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/
+# 
+# EOF (2024/06/01)
+# 
