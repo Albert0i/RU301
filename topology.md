@@ -62,3 +62,39 @@ appendfsync everysec
 
 ### EOF (2024/05/31)
 
+
+### [The Road So Far](https://youtu.be/FD5VUPwJ9-0)
+### Prologue 
+### Introduction 
+### Up and running 
+#### Linux 
+#### Windows  
+### Docker 
+#### Linux container 
+#### Windows container 
+### Summary 
+### Bibliography 
+### Epilogue 
+### EOF 
+
+### On Topology 
+### Prologue 
+### Introduction 
+### Replications
+#### Basic Replication 
+#### Replication with Sentinels 
+### Sharded cluster 
+### Summary 
+### Bibliography 
+### Epilogue 
+### EOF 
+
+### On Topology (cont) 
+### Prologue 
+### Introduction 
+### Replication with sentinels 
+### Sharded cluster 
+### Summary 
+### Bibliography 
+### Epilogue 
+### EOF 
