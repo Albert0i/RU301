@@ -241,7 +241,7 @@ stop-writes-on-bgsave-error yes
 
 
 ### Epilogue 
-If you intend to use Redis as a cache or session store. A standalone instance will pprobably suffice and you journey probably end here... Lastly, You can set: 
+If you intend to use Redis as a cache or session store. A standalone instance will pprobably suffice and you journey ends here... Lastly, You can set: 
 ```
 save ""
 appendonly no
