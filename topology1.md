@@ -84,7 +84,6 @@ Or via Redis command line:
 
 #### 2. Windows container 
 ![alt banner](homebrew-cluster-docker/img/banner.JPG)
-
 Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and properly config to run `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) repositiry is available to describe how to build customized Redis Windows image. Or you can pull the pre-built image from Docker Hub: 
 ```
 docker image pull albert0i/redis:7.2.4-nanoserver-20H2
