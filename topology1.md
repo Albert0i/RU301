@@ -184,7 +184,7 @@ Redis command line and Redis Insight have to be installed in local system in ord
 
 
 ### IV. Summary 
-The last piece you need to to config Redis. 
+The last piece puzzle is to to config Redis, to name a few: 
 
 redis.conf 
 ```
@@ -200,14 +200,36 @@ maxclients 10000
 # memory size in bytes  
 maxmemory 1288490188
 
-# save 3600 1 300 100 60 10000
+# Unless specified otherwise, by default Redis will save the DB:
+#   * After 3600 seconds (an hour) if at least 1 change was performed
+#   * After 300 seconds (5 minutes) if at least 100 changes were performed
+#   * After 60 seconds if at least 10000 changes were performed
+#
+# You can set these explicitly by uncommenting the following line.
+#
+save 3600 1 300 100 60 10000
 
+# Note that you must specify a directory here, not a file name.
+dir /data
+
+# The filename where to dump the DB
+dbfilename dump.rdb
+
+# Enable AOF file persistence
 appendonly yes
+
+# Choose a name for the AOF file
 appendfilename "appendonly.aof"
 
 # appendfsync always
 appendfsync everysec
 # appendfsync no
+
+# 
+protected-mode no
+
+# 
+stop-writes-on-bgsave-error yes
 ```
 
 
