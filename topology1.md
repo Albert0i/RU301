@@ -78,7 +78,7 @@ Please note that, **Redis Stack = Redis Stack Server + Redis Insight**, which is
 
 ![alt redis insight](cluster-docker/img/redis_insight.png)
 
-Or via redis command line: 
+Or via Redis command line: 
 
 ![alt redis cli](cluster-docker/img/redis_cli.png)
 
