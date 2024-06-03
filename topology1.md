@@ -21,6 +21,7 @@ Depending on the running platform, installation differs.
 #### 2. Windows  
 Using Redis in Windows is awkwardly embarrassing for there is no official Redis binary. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. What's more? It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
 
+
 ### III. Docker 
 Oftentimes, you opt to run Redis in containers. depending on the type of containers, the image and configuration differ. 
 
@@ -100,7 +101,7 @@ services:
     volumes:
       - ${DATA_DIR}:c:\data
 ```
-to further facilitate with a `.env` and `Make` file.
+And in cooperate with `.env` and `Make` file.
 
 .env
 ```
@@ -187,13 +188,6 @@ config:
 ### V. Bibliography 
 ### Epilogue 
 ### EOF (2024/06/07)
-
-
-
-
-
-
-
 
 
 redis:7.2.4-nanoserver-20H2
