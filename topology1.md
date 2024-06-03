@@ -22,13 +22,13 @@ If you can not see any usefulness of Redis, please stop reading this article.
 Depending on the type of platform, installation differs. 
 
 #### 1. Linux 
-[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for Redis is available in most of the linux distribution. More often than not, the only command you need to run is: 
+[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for Redis is free and available in most of the linux distribution. More often than not, the only command you need to run is: 
 ```
 sudo apt-get install redis
 ```
 
 #### 2. Windows  
-Using Redis in Windows is awkwardly embarrassing for there is no official Redis binary. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
+Using Redis in Windows is awkwardly embarrassing for there is no official Redis built. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
 
 The command to run Redis in both platform is: 
 ```
