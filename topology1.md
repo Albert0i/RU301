@@ -68,7 +68,7 @@ Or via redis command line:
 ![alt redis cli](cluster-docker/img/redis_cli.png)
 
 #### 2. Windows container 
-Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and switched to using `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) is available in github to describe how to build a customized redis image. Or pull the image pre-built image from Docker Hub using:  
+Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and switched to using `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) is available in github to describe how to build a customized redis image. Or pull the pre-built image from Docker Hub:  
 ```
 docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 ```
