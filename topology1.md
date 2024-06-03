@@ -27,7 +27,7 @@ Oftentimes, you opt to run Redis in containers. depending on the type of contain
 #### 1. Linux container 
 Pulling and using official [Redis](https://hub.docker.com/_/redis) is straightforward and very easy. For a variety of version and linux distribution are at one's disposal. 
 
-A simple `docker-compose.yml` is sufficient to boost up everything:
+A single `docker-compose.yml` is sufficient to boost up everything:
 
 docker-compose.yml
 ```
