@@ -184,29 +184,30 @@ Redis command line and Redis Insight have to be installed in local system in ord
 
 
 ### IV. Summary 
-The last piece you need to know is how to config Redis. 
+The last piece you need to to config Redis. 
 
 redis.conf 
 ```
-# redis.conf file
+# Accept connections on the specified port, default is 6379
+port 6379
 
-# Note that you must specify a directory here, not a file name.
-dir /data
+# all available interfaces
+bind * -::*                     
 
-# Enable AOF file persistence
+# max number of simultaneous clients
+maxclients 10000
+
+# memory size in bytes  
+maxmemory 1288490188
+
+# save 3600 1 300 100 60 10000
+
 appendonly yes
-
-# You can set these explicitly by uncommenting the following line.
-save 3600 1 300 100 60 10000
+appendfilename "appendonly.aof"
 
 # appendfsync always
 appendfsync everysec
-
-# 
-protected-mode no
-
-# 
-stop-writes-on-bgsave-error yes
+# appendfsync no
 ```
 
 
