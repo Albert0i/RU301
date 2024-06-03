@@ -57,7 +57,7 @@ services:
     depends_on:
       - redis 
 ```
-Please note, redis-stack = redis-stack-server + redis insight, which is the best GUI client, I supposed. When containers are up, just point your browser to http://localhost:5540 to access Redis. 
+Please note, **redis-stack = redis-stack-server + redis insight**, which is the best GUI client, I supposed. When all containers are up, just point your browser to http://localhost:5540 to access Redis. 
 
 ![alt docker-compose up](cluster-docker/img/docker_compose_up.png)
 
