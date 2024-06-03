@@ -116,7 +116,7 @@ services:
     volumes:
       - ${DATA_DIR}:c:\data
 ```
-And `.env` and `Make` file to facilitate life.
+`.env` and `Make` are employed to facilitate life. 
 
 .env
 ```
