@@ -7,7 +7,6 @@ networks:
       driver: default
       config:
         - subnet: "192.168.1.0/24"
-          gateway: "192.168.1.254"
 
 services:
   #Node 1
@@ -117,8 +116,6 @@ services:
     build: 
       context: .
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
-    ports:
-      - 6379:6379
     container_name: creator
     restart: unless-stopped    
     volumes:

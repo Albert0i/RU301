@@ -1,0 +1,53 @@
+########################## CLUSTER DOCKER/NAT support  ########################
+
+# In certain deployments, Redis Cluster nodes address discovery fails, because
+# addresses are NAT-ted or because ports are forwarded (the typical case is
+# Docker and other containers).
+#
+# In order to make Redis Cluster working in such environments, a static
+# configuration where each node knows its public address is needed. The
+# following four options are used for this scope, and are:
+#
+# * cluster-announce-ip
+# * cluster-announce-port
+# * cluster-announce-tls-port
+# * cluster-announce-bus-port
+#
+# Each instructs the node about its address, client ports (for connections
+# without and with TLS) and cluster message bus port. The information is then
+# published in the header of the bus packets so that other nodes will be able to
+# correctly map the address of the node publishing the information.
+#
+# If tls-cluster is set to yes and cluster-announce-tls-port is omitted or set
+# to zero, then cluster-announce-port refers to the TLS port. Note also that
+# cluster-announce-tls-port has no effect if tls-cluster is set to no.
+#
+# If the above options are not used, the normal Redis Cluster auto-detection
+# will be used instead.
+#
+# Note that when remapped, the bus port may not be at the fixed offset of
+# clients port + 10000, so you can specify any port and bus-port depending
+# on how they get remapped. If the bus-port is not set, a fixed offset of
+# 10000 will be used as usual.
+#
+# Example:
+#
+# cluster-announce-ip 10.1.1.5
+# cluster-announce-tls-port 6379
+# cluster-announce-port 0
+# cluster-announce-bus-port 6380
+
+
+
+
+cf05040e9f162a0d53a29f98d4c0f29f494f94bf 192.168.1.12:6379@16379 master - 0 1717141596429 2 connected 5461-10922
+6bdfdabc18af3b864d690ce84434aecdb2db3f92 192.168.1.16:6379@16379 slave cf05040e9f162a0d53a29f98d4c0f29f494f94bf 17171415
+97565 1717141595521 2 connected
+8f41784a00b2249cc001e960cf67d5a21ccb974c 192.168.1.11:6379@16379 myself,master - 0 0 1 connected 0-5460
+d11c1456ba076cd9781c5848e698cf87818cd271 192.168.1.15:6379@16379 slave 8f41784a00b2249cc001e960cf67d5a21ccb974c 17171415
+97778 1717141595225 1 connected
+0b97e487803b22f57e8dc96c1c264a34a785ce3a 192.168.1.14:6379@16379 master - 0 1717141597882 7 connected 10923-16383
+791ec588e30c29a44acb593f0d1d64e3c4e601a0 192.168.1.13:6379@16379 slave 0b97e487803b22f57e8dc96c1c264a34a785ce3a 0 171714
+1596076 7 connected
+
+D:\RU\RU301\homebrew-cluster-docker>

@@ -26,9 +26,9 @@ help:
 	@echo "	create		create the cluster"
 	@echo "	creator		docker-compose exec creator cmd"
 	@echo "	cli 		docker-compose exec re1 redis-cli -c"
-	@echo "	info		docker-compose exec creator redis-cli cluster info"
-	@echo "	nodes		docker-compose exec creator redis-cli cluster nodes"
-	@echo "	slots		docker-compose exec creator redis-cli cluster slots"
+	@echo "	info		docker-compose exec re1 redis-cli cluster info"
+	@echo "	nodes		docker-compose exec re1 redis-cli cluster nodes"
+	@echo "	slots		docker-compose exec re1 redis-cli cluster slots"
 	@echo "	config		edit configuration"
 
 #
