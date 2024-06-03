@@ -188,49 +188,27 @@ The last piece you need to know is how to config Redis.
 
 redis.conf 
 ```
-# Note that you must specify a directory here, not a file name.
-dir "./data"
+# redis.conf file
 
-# The filename where to dump the DB
-dbfilename "dump.rdb"
+# Note that you must specify a directory here, not a file name.
+dir /data
 
 # Enable AOF file persistence
 appendonly yes
 
-# Choose a name for the AOF file
-appendfilename "appendonly.aof"
-
-# Unless specified otherwise, by default Redis will save the DB:
-#   * After 3600 seconds (an hour) if at least 1 change was performed
-#   * After 300 seconds (5 minutes) if at least 100 changes were performed
-#   * After 60 seconds if at least 10000 changes were performed
-#
 # You can set these explicitly by uncommenting the following line.
-#
 save 3600 1 300 100 60 10000
-
-#
-# The default is "everysec", as that's usually the right compromise between
-# speed and data safety. It's up to you to understand if you can relax this to
-# "no" that will let the operating system flush the output buffer when
-# it wants, for better performances (but if you can live with the idea of
-# some data loss consider the default persistence mode that's snapshotting),
-# or on the contrary, use "always" that's very slow but a bit safer than
-# everysec.
-#
-# More details please check the following article:
-# http://antirez.com/post/redis-persistence-demystified.html
-#
-# If unsure, use "everysec".
 
 # appendfsync always
 appendfsync everysec
-# appendfsync no
 
-# RedisJson Support 
-enable-module-command yes
-loadmodule rejson.dll
+# 
+protected-mode no
+
+# 
+stop-writes-on-bgsave-error yes
 ```
+
 
 ### V. Bibliography 
 1. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
