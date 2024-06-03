@@ -40,9 +40,9 @@ redis-server /path/to/redis.conf
 Oftentimes, you opt to run Redis in containers. depending on the type of containers, the image and configuration differ. 
 
 #### 1. Linux container 
-Pulling and using official [Redis](https://hub.docker.com/_/redis) is straightforward and very easy. For a variety of version and linux distribution are at one's disposal. 
+Pulling and using official [Redis](https://hub.docker.com/_/redis) image is straightforward and easy-peasy. There exists an abundance of variations on linux distribution are at one's disposal. 
 
-A single `docker-compose.yml` is sufficient to boost up everything:
+A single `docker-compose.yml` is sufficient to bring it to life... 
 
 docker-compose.yml
 ```
@@ -72,7 +72,7 @@ services:
     depends_on:
       - redis 
 ```
-Please note, **Redis Stack = Redis Stack Server + Redis Insight**, which is the best GUI client, I supposed. When all containers are up, just point your browser to http://localhost:5540 to access Redis. 
+Please note that, **Redis Stack = Redis Stack Server + Redis Insight**, which is the best GUI client, I supposed. When all containers are up and running, just point your browser to http://localhost:5540 to access Redis. 
 
 ![alt docker-compose up](cluster-docker/img/docker_compose_up.png)
 
