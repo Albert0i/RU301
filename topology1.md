@@ -1,7 +1,7 @@
 ### [The Road So Far](https://youtu.be/FD5VUPwJ9-0)
 
 ### Prologue 
-I'm not a mindful person. Treasure I kept, notes I pent are lost forthwith. I tried to learn much as possible, but the more I learn the more I forget. And yet, I keep on learning everyday... For the more I know the more I do not... 
+I'm not a mindful person. Treasure I kept, notes I pent are lost forthwith. I tried to learn as much as possible, but the more I learn the more I forget. And yet, I keep on learning everyday... For the more I know the more I do not... 
 
 
 ### I. Introduction 
@@ -9,20 +9,31 @@ Have a grimpse of the definition, [Redis](https://en.wikipedia.org/wiki/Redis) i
 
 > in-memory storage, used as a distributed, in-memory key–value database, cache and message broker, with optional durability. Because it holds all data in memory and because of its design, Redis offers low-latency reads and writes, making it particularly suitable for use cases that require a cache. Redis is the most popular NoSQL database, and one of the most popular databases overall.
 
-If you can not see the usefulness of Redis, you should stop reading here. 
+> Redis can be used as a database, cache, streaming engine, message broker, and more. The following quick start guides will show you how to use Redis for the following specific purposes:
+
+- [Data structure store](https://redis.io/docs/latest/develop/get-started/data-store/)
+- [Document database](https://redis.io/docs/latest/develop/get-started/document-database/)
+- [Vector database](https://redis.io/docs/latest/develop/get-started/vector-database/)
+
+If you can not see any usefulness of Redis, please stop reading this article. 
 
 
 ### II. Up and running 
-Depending on the running platform, installation differs. 
+Depending on the type of platform, installation differs. 
 
 #### 1. Linux 
-[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for it is available in most of the linux distribution. More often than not, the only command you need to run is: 
+[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for Redis is available in most of the linux distribution. More often than not, the only command you need to run is: 
 ```
 sudo apt-get install redis
 ```
 
 #### 2. Windows  
-Using Redis in Windows is awkwardly embarrassing for there is no official Redis binary. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. What's more? It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
+Using Redis in Windows is awkwardly embarrassing for there is no official Redis binary. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
+
+The command to run Redis in both platform is: 
+```
+redis-server /path/to/redis.conf 
+```
 
 
 ### III. Docker 
