@@ -84,7 +84,7 @@ Or via Redis command line:
 
 #### 2. Windows container 
 ![alt banner](homebrew-cluster-docker/img/banner.JPG)
-Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and properly config to run `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) repositiry is available to describe how to build customized Redis Windows image. Or you can pull the pre-built image from Docker Hub: 
+Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and properly config to run `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) repositiry is available to describe how to build customized Redis Windows image. Or you can pull a pre-built image from Docker Hub: 
 ```
 docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 ```
@@ -94,7 +94,7 @@ docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 
 ![alt 20H2](homebrew-cluster-docker/img/20H2.JPG)
 
-As of this writing, a version of `2.24.2` version of Docker Desktop is employed. 
+As of this writing, a version of `2.24.2` of Docker Desktop is employed. 
 
 ![alt Docker Desktop](homebrew-cluster-docker/img/4.24.2.JPG)
 
@@ -116,7 +116,7 @@ services:
     volumes:
       - ${DATA_DIR}:c:\data
 ```
-And in cooperate with `.env` and `Make` file.
+And `.env` and `Make` file to facilitate life.
 
 .env
 ```
@@ -157,39 +157,21 @@ help:
 	@echo "	logs		server logs"
 	@echo "	config		edit configuration"
 
-#
-# build custom image
-#
 build:
 	docker-compose build
 
-#
-# start the server
-#
 up:
 	docker-compose up -d --remove-orphans
 
-#
-# stop the server
-#
 down:
 	docker-compose down -v
 
-#
-# show running containers 
-#
 ps:
 	docker-compose ps
 
-#
-# server logs
-#
 logs:
 	docker-compose logs
 
-#
-# edit configuration
-#
 config:
 	nano .env
 ```
