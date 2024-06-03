@@ -184,7 +184,7 @@ Redis command line and Redis Insight have to be installed in local system in ord
 
 
 ### IV. Summary 
-The last piece puzzle is to to config Redis, to name a few: 
+The last piece of puzzle is to config Redis, to name a few: 
 
 redis.conf 
 ```
