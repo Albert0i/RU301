@@ -74,11 +74,11 @@ docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 ```
 ![alt docker pull](homebrew-cluster-docker/img/docker_pull.JPG)
 
-**Caveat**: The base image to be used to built the image must match the version number of the running machine, ie. `20J2` in my machine. 
+**Caveat**: Version of base image used to build customized image must match that in running machine, ie. `20J2` in my environment. 
 
 ![alt 20H2](homebrew-cluster-docker/img/20H2.JPG)
 
-As of this writing, a version of `2.24.2` version of Docker Desktop is used. 
+As of this writing, a version of `2.24.2` version of Docker Desktop is employed. 
 
 ![alt Docker Desktop](homebrew-cluster-docker/img/4.24.2.JPG)
 
