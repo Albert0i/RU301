@@ -101,7 +101,7 @@ As of this writing, a version of `2.24.2` of Docker Desktop is employed.
 
 ![alt Docker Desktop](homebrew-cluster-docker/img/4.24.2.JPG)
 
-And then comes the `docker-compose.yml` file:
+And here comes the `docker-compose.yml` file:
 
 docker-compose.yml
 ```
@@ -135,7 +135,7 @@ DATA_DIR=C:\redis\data
 COMPOSE_CONVERT_WINDOWS_PATHS=0
 ```
 
-As well as `Makefile` to facilitate life: 
+And `Makefile` to facilitate life: 
 
 Makefile
 ```
