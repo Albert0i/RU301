@@ -9,20 +9,21 @@ Have a grimpse of the definition, [Redis](https://en.wikipedia.org/wiki/Redis) i
 
 > in-memory storage, used as a distributed, in-memory key–value database, cache and message broker, with optional durability. Because it holds all data in memory and because of its design, Redis offers low-latency reads and writes, making it particularly suitable for use cases that require a cache. Redis is the most popular NoSQL database, and one of the most popular databases overall.
 
+[Quick starts](https://redis.io/docs/latest/develop/get-started/) says: 
 > Redis can be used as a database, cache, streaming engine, message broker, and more. The following quick start guides will show you how to use Redis for the following specific purposes:
 
 - [Data structure store](https://redis.io/docs/latest/develop/get-started/data-store/)
 - [Document database](https://redis.io/docs/latest/develop/get-started/document-database/)
 - [Vector database](https://redis.io/docs/latest/develop/get-started/vector-database/)
 
-If you can not see any usefulness of Redis, please stop reading this article. 
+If you do not see any interest, Redis may not be your cup of tea. 
 
 
 ### II. Up and running 
 Depending on the type of platform, installation differs. 
 
 #### 1. Linux 
-[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for Redis is free and available in most of the linux distribution. More often than not, the only command you need to run is: 
+[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/) is straightforward and hassle-free, for Redis is freely available in most of the linux distribution. More often than not, the only command you need to run is: 
 ```
 sudo apt-get install redis
 ```
@@ -40,9 +41,9 @@ redis-server /path/to/redis.conf
 Oftentimes, you opt to run Redis in containers. depending on the type of containers, the image and configuration differ. 
 
 #### 1. Linux container 
-Pulling and using official [Redis](https://hub.docker.com/_/redis) image is straightforward and easy-peasy. There exists an abundance of variations on linux distribution are at one's disposal. 
+Using official [Redis](https://hub.docker.com/_/redis) image is intuitive and easy-peasy. There exists an abundance of variations on linux distribution at your disposal. 
 
-A single `docker-compose.yml` is sufficient to bring it to life... 
+A single `docker-compose.yml` is all you need to begin with.
 
 docker-compose.yml
 ```
@@ -72,25 +73,26 @@ services:
     depends_on:
       - redis 
 ```
-Please note that, **Redis Stack = Redis Stack Server + Redis Insight**, which is the best GUI client, I supposed. When all containers are up and running, just point your browser to http://localhost:5540 to access Redis. 
+Please note that you can use Redis Stack image which includes Redis Stack Server and Redis Insight, which is the best GUI client, I think. When all containers are up and running, just point your browser to http://localhost:5540 to access Redis. 
 
 ![alt docker-compose up](cluster-docker/img/docker_compose_up.png)
 
 ![alt redis insight](cluster-docker/img/redis_insight.png)
 
-Or via Redis command line: 
+Or via command line tool:
 
 ![alt redis cli](cluster-docker/img/redis_cli.png)
 
 #### 2. Windows container 
 ![alt banner](homebrew-cluster-docker/img/banner.JPG)
-Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and properly config to run `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) repositiry is available to describe how to build customized Redis Windows image. Or you can pull a pre-built image from Docker Hub: 
+Having installed [Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/) and configured to run `Windows containers`. A [Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git) repositiry is available to describe how to build customized Redis Windows image. Or you can pull a pre-built image from Docker Hub: 
 ```
 docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 ```
 ![alt docker pull](homebrew-cluster-docker/img/docker_pull.JPG)
 
-**Caveat**: Version of base image MUST match the version in running machine, ie. `20J2` in my environment. 
+**Caveat**
+OS Version of used to built docker image MUST match the version in the running machine, ie. both are `20J2` in my case. 
 
 ![alt 20H2](homebrew-cluster-docker/img/20H2.JPG)
 
@@ -98,7 +100,7 @@ As of this writing, a version of `2.24.2` of Docker Desktop is employed.
 
 ![alt Docker Desktop](homebrew-cluster-docker/img/4.24.2.JPG)
 
-A `docker-compose.yml` file:
+And then comes the `docker-compose.yml` file:
 
 docker-compose.yml
 ```
@@ -116,7 +118,7 @@ services:
     volumes:
       - ${DATA_DIR}:c:\data
 ```
-`.env` and `Make` are employed to facilitate life. 
+And `.env` file: 
 
 .env
 ```
@@ -131,6 +133,8 @@ DATA_DIR=C:\redis\data
 
 COMPOSE_CONVERT_WINDOWS_PATHS=0
 ```
+
+As well as `Makefile` to facilitate life: 
 
 Makefile
 ```
@@ -180,11 +184,11 @@ config:
 
 ![alt make up ps log](homebrew-cluster-docker/img/make_up_ps_log.JPG)
 
-Redis command line and Redis Insight have to be installed in local system in order to access to Redis Data. 
+Command line tool or Redis Insight is installed to local system in order to access Redis Data. 
 
 
 ### IV. Summary 
-The last piece of puzzle is to config Redis, to name a few: 
+The last piece of the puzzle is to config Redis, to name only a few: 
 
 redis.conf 
 ```
@@ -241,7 +245,7 @@ stop-writes-on-bgsave-error yes
 
 
 ### Epilogue 
-If you intend to use Redis as a cache or session store. A standalone instance will pprobably suffice and your journey should end here... Lastly, You can set: 
+If you do not make heavy usage on Redis, you journey should probably end here. In addition, if Redis works for you only a cache or session store, you can set: 
 ```
 save ""
 appendonly no
