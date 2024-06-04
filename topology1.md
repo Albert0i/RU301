@@ -2,6 +2,8 @@
 
 ### Prologue 
 ```
+Alas! they had been friends in youth;
+But whispering tongues can poison truth;
 And constancy lives in realms above;
 And life is thorny; and youth is vain;
 And to be wroth with one we love
