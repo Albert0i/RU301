@@ -195,6 +195,8 @@ Command line tool or Redis Insight is installed to local system in order to acce
 
 
 ### IV. Summary 
+From the above examples, from the above comparison you can see how easy to spin up a Redis Server in Linux, and how *inconvenient* to do the same thing in Windows. You are free to choose, but you are not free from the consequence of your choice... 
+
 The last piece of the puzzle is to config Redis, to name only a few: 
 
 redis.conf 
