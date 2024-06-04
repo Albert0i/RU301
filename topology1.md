@@ -1,8 +1,12 @@
 ### [The Road So Far](https://youtu.be/FD5VUPwJ9-0)
 
 ### Prologue 
-I'm not a mindful person. Treasure I kept, notes I pent are lost forthwith. I tried to learn as much as possible, but the more I learn the more I forget. And yet, I keep on learning everyday... For the more I know the more I do not... 
-
+```
+And constancy lives in realms above;
+And life is thorny; and youth is vain;
+And to be wroth with one we love
+Doth work like madness in the brain.
+```
 
 ### I. Introduction 
 Have a grimpse of the definition, [Redis](https://en.wikipedia.org/wiki/Redis) is defined by: 
