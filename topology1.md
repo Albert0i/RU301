@@ -92,6 +92,7 @@ docker image pull albert0i/redis:7.2.4-nanoserver-20H2
 ![alt docker pull](homebrew-cluster-docker/img/docker_pull.JPG)
 
 **Caveat**
+
 OS Version of used to built docker image MUST match the version in the running machine, ie. both are `20J2` in my case. 
 
 ![alt 20H2](homebrew-cluster-docker/img/20H2.JPG)
