@@ -130,7 +130,7 @@ And `.env` file:
 .env
 ```
 # image name
-IMAGE_NAME=redis
+IMAGE_NAME=albert0i/redis
 
 # image version
 IMAGE_VERSION=7.2.4-nanoserver-20H2
