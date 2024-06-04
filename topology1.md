@@ -1,5 +1,6 @@
 ### [The Road So Far](https://youtu.be/FD5VUPwJ9-0)
 
+
 ### Prologue 
 ```
 Alas! they had been friends in youth;
@@ -9,6 +10,7 @@ And life is thorny; and youth is vain;
 And to be wroth with one we love
 Doth work like madness in the brain.
 ```
+
 
 ### I. Introduction 
 Have a grimpse of the definition, [Redis](https://en.wikipedia.org/wiki/Redis) is defined by: 
@@ -263,4 +265,4 @@ appendfsync no
 To prevent Redis from saving data to disk. 
 
 
-### EOF (2024/06/07)
+### EOF (2024/06/04)
