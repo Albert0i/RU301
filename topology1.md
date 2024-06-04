@@ -103,7 +103,7 @@ OS Version used to built docker image MUST match the version in the running mach
 
 ![alt 20H2](homebrew-cluster-docker/img/20H2.JPG)
 
-As of this writing, a version of `2.24.2` of Docker Desktop is employed. 
+As of this writing, a version of `4.24.2` of Docker Desktop is employed. 
 
 ![alt Docker Desktop](homebrew-cluster-docker/img/4.24.2.JPG)
 
