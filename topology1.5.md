@@ -206,6 +206,7 @@ pid 8946's new affinity list: 2-8
 If a Redis server that only stores data in RAM is restarted, all data is lost. To prevent such data loss, there needs to be some mechanism for persisting the data to disk. Redis provides two of them, snapshotting and an append-only file, or AOF. You can configure your Redis instance
 to use either of the two or a combination of both. 
 
+#### 1. Snapshot 
 When a snapshot is created, the entire point in time via the data set is written to persistent storage
 in a compact RDB file. You can set up recurring backups,
 for example, every one, 12, or 24 hours, and use these backups to easily restore
@@ -314,6 +315,8 @@ dir ./
 SAVE 60 1000 
 ```
 As an example, this configuration will make Redis automatically dump the data set to disk every 60 seconds if at least 1,000 keys changed in that period. While snapshotting it is a great strategy for the use cases explained above, it leaves a huge possibility for data loss. You can configure snapshots to run every few minutes or after X writes against the database. But if the server crashes, you lose all the writes since the last snapshot was taken. In many use cases, that kind of data loss can be acceptable. But in many others, it is absolutely not. For all of the other use cases, 
+
+#### 2. AOF 
 
 Redis offers the AOF persistence option. AOF, or Append Only File, works by logging every incoming write command to disk as it happens. These commands can then be replayed to server startup to reconstruct the original data set. Commands are logged using the same format as the Redis protocol
 itself in an append only fashion. 
