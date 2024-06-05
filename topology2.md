@@ -211,7 +211,7 @@ redis> SENTINEL get-master-addr-by-name myprimary
 ```
 
 
-### VI. Clustering In Redis
+### VI. Clustering In Redis (TL;DR)
 Before we jump into the details, let's first address the elephant in the room. *DBAAS* offerings, or Database as a Service in the cloud. No doubt it's useful to know how Redis scales and how you might deploy it. But deploying and maintaining a Redis cluster is a fair amount of work.
 
 So if you don't want to deploy and manage Redis yourself, then consider sir signing up for Redis Cloud, our managed service, and let us do the scaling for you. Of course, that route is not for everyone. And as I said, there's a lot to learn here. So let's dive in. We'll, start with scalability. Here's one definition.
