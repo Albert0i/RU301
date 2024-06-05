@@ -3,44 +3,22 @@
 ### Prologue 
 Time and money are two major factor which drive people forward. Oftentimes one either loses time or money and vice versa. On a sunny day, when a field trip is ruined by a broken car right in the way, what will you lose? It's your temper... 
 
-
-### I. Introduction 
 This article is created from transscript of [RU301](https://redis.io/university/courses/ru301/) verbatim, not because of my laziness. But for the great significance and unstirrable value in the aforementioned narrative of the course. Nevertheless links and addenda will be appended whenever it is necessary. 
 
 
-### II. Redis Server Overview
+### I. Redis Server Overview
 As you might already know, Redis is an open source data structure server written in C. You can store multiple data types like strings, hashes, and streams, and access them by a unique key name. 
 
 All keys in the Redis database are stored in a flat key space. There is no enforced schema or naming policy, and the responsibility for organizing the key space is left to the developer.
 
-The speed Redis is famous for is mostly due to the fact
-that Redis stores and serves data entirely
-from RAM memory instead of disk, as most other databases do.
-Another contributing factor is the predominantly
-single-threaded nature.
+The speed Redis is famous for is mostly due to the fact that Redis stores and serves data entirely from RAM memory instead of disk, as most other databases do.
 
-Single threading avoids race conditions
-and CPU-heavy context switching associated with threads.
-Indeed, this means that open source Redis
-can't take advantage of the processing
-power of multiple CPU cores, although CPU is rarely
-the bottleneck with Redis.
+Another contributing factor is the predominantly single-threaded nature. Single threading avoids race conditions and CPU-heavy context switching associated with threads. Indeed, this means that open source Redis
+can't take advantage of the processing power of multiple CPU cores, although CPU is rarely the bottleneck with Redis.
 
-You are more likely to bump up against memory or network
-limitations before hitting any CPU limitations.
-That said, Redis Enterprise does let
-you take advantage of all the cores on a single machine.
+You are more likely to bump up against memory or network limitations before hitting any CPU limitations. That said, Redis Enterprise does let you take advantage of all the cores on a single machine.
 
-The reading and especially writing to a socket
-are expensive operations.
-So in Redis version 6.0, multi-threaded I/O
-was introduced.
-When this feature is enabled, Redis
-can delegate the time spent reading and writing
-to I/O sockets over to other threads,
-freeing up cycles for storing and retrieving data,
-and boosting overall performance by up to a factor of two
-for some workloads.
+The reading and especially writing to a socket are expensive operations. So in Redis version 6.0, multi-threaded I/O was introduced. When this feature is enabled, Redis can delegate the time spent reading and writing to I/O sockets over to other threads, freeing up cycles for storing and retrieving data, and boosting overall performance by up to a factor of two for some workloads.
 
 #### Basic Replication 
 
