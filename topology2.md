@@ -216,7 +216,7 @@ Before we jump into the details, let's first address the elephant in the room. *
 
 So if you don't want to deploy and manage Redis yourself, then consider sir signing up for Redis Cloud, our managed service, and let us do the scaling for you. Of course, that route is not for everyone. And as I said, there's a lot to learn here. So let's dive in. We'll, start with scalability. Here's one definition.
 
-**Scalability is the property of a system to handle a growing amount of work by adding resources to the system.**
+> Scalability is the property of a system to handle a growing amount of work by adding resources to the system.
 
 The two most common scaling strategies are *vertical scaling* and *horizontal scaling*. Vertical scaling, or also called scaling up, means adding more resources like CPUs or memory to your server. Horizontal scaling, or scaling out, implies adding more servers to your pool of resources. It's the difference between just getting a bigger server and deploying a whole fleet of servers.
 
