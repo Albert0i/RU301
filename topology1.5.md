@@ -80,9 +80,27 @@ In javascript programming, there are two popular client libraries, ie: [Node-Red
 Both of them support Redis Cluster but only ioredis supports replication with Sentinel. 
 
 
-#### Basic Replication 
+### V. Client Performance Improvements
+#### 1. Connection management - Pooling
+As we showed in the previous section, Redis clients are responsible for managing connections to the Redis server. Creating and recreating new connections over and over again, creates a lot of unnecessary load on the server. A good client library will offer some way of optimizing connection management, by setting up a connection pool, for example.
 
-#### Replication with Sentinels 
+With connection pooling, the client library will instantiate a series of (persistent) connections to the Redis server and keep them open. When the application needs to send a request, the current thread will get one of these connections from the pool, use it, and return it when done.
+
+![alt connection pool](homebrew-standalone/img/connection_pool.png)
+
+So if possible, always try to choose a client library that supports pooling connections, because that decision alone can have a huge influence on your system’s performance.
+
+#### 2. Pipelining
+As in any client-server application, Redis can handle many clients simultaneously.
+
+Each client does a (typically blocking) read on a socket and waits for the server response. The server reads the request from the socket, parses it, processes it, and writes the response to the socket. The time the data packets take to travel from the client to the server, and then back again, is called network round trip time, or RTT.
+
+If, for example, you needed to execute 50 commands, you would have to send a request and wait for the response 50 times, paying the RTT cost every single time. To tackle this problem, Redis can process new requests even if the client hasn't already read the old responses. This way, you can send multiple commands to the server without waiting for the replies at all; the replies are read in the end, in a single step.
+
+![alt pipelining](homebrew-standalone/img/pipelining.png)
+
+This technique is called pipelining and is another good way to improve the performance of your system. Most Redis libraries support this technique out of the box.
+
 
 ### Sharded cluster 
 
@@ -110,24 +128,7 @@ for more than 50 programming languages.
 Client Performance Improvements
 ===============================
 Connection management - Pooling
-As we showed in the previous section, Redis clients are responsible for managing connections to the Redis server. Creating and recreating new connections over and over again, creates a lot of unnecessary load on the server. A good client library will offer some way of optimizing connection management, by setting up a connection pool, for example.
-
-With connection pooling, the client library will instantiate a series of (persistent) connections to the Redis server and keep them open. When the application needs to send a request, the current thread will get one of these connections from the pool, use it, and return it when done.
-
-![alt connection pool](homebrew-standalone/img/connection_pool.png)
-
-So if possible, always try to choose a client library that supports pooling connections, because that decision alone can have a huge influence on your system’s performance.
-
 Pipelining
-As in any client-server application, Redis can handle many clients simultaneously.
-
-Each client does a (typically blocking) read on a socket and waits for the server response. The server reads the request from the socket, parses it, processes it, and writes the response to the socket. The time the data packets take to travel from the client to the server, and then back again, is called network round trip time, or RTT.
-
-If, for example, you needed to execute 50 commands, you would have to send a request and wait for the response 50 times, paying the RTT cost every single time. To tackle this problem, Redis can process new requests even if the client hasn't already read the old responses. This way, you can send multiple commands to the server without waiting for the replies at all; the replies are read in the end, in a single step.
-
-![alt pipelining](homebrew-standalone/img/pipelining.png)
-
-This technique is called pipelining and is another good way to improve the performance of your system. Most Redis libraries support this technique out of the box.
 
 
 Initial Tuning
