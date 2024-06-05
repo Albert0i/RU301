@@ -241,305 +241,209 @@ If all our data is divided between three Redis Servers, we would need a six-memb
 How many shards need to agree that a fellow shard is offline before fail-over is triggered? Well that's configurable. And you could set it up when you create a cluster. But there are some very important guidelines that you need to follow. To prevent something called a *split brain* situation in a Redis cluster, always keep an odd number of primary shards and two replicas per primary shard. Split brain situation is a very common issue in the world of distributed systems. A popular solution is to always keep an odd number of shards in your cluster. Again, to prevent this kind of conflict, always keep the odd number of primary shards and two replicas per primary shard.
 
 
-### VII. Persistence Options in Redis
-If a Redis server that only stores data in RAM is restarted, all data is lost. To prevent such data loss, there needs to be some mechanism for persisting the data to disk. Redis provides two of them, snapshotting and an append-only file, or AOF. You can configure your Redis instance
-to use either of the two or a combination of both. 
+### VII. Creating a Redis Cluster
+#### Step 1
+To create a cluster, we need to spin up a few empty Redis instances and configure them to run in cluster mode.
 
-#### 1. Snapshot 
-When a snapshot is created, the entire point in time via the data set is written to persistent storage
-in a compact RDB file. You can set up recurring backups,
-for example, every one, 12, or 24 hours, and use these backups to easily restore
-different versions of the data set in case of disasters. You can also use these snapshots to create a clone of the server or simply leave them in place for a future restart.
-
-Creating an RDB file requires a lot of disk IO. If performed in the main Redis process, this would reduce the server's performance. That's why this work is done by a forked child process.
-But even forking can be time consuming if the data set is large. This may result in decreased performance or in Redis failing to serve clients for a few milliseconds or even up to a second for very large data sets. Understanding this should help you decide whether this solution makes sense for your requirements. You can configure the name and location of the RDB file
-with the `dbfilename` and `dir` configuration directives, either through the redis.conf file or through the Redis CLI. And of course, you can configure how often you want to create a snapshot.
-Here's an excerpt from the `redis.conf `file showing the default values.
+Here’s a minimal configuration file for Redis Cluster:
 ```
-################################ SNAPSHOTTING  ################################
-
-# Save the DB to disk.
-#
-# save <seconds> <changes> [<seconds> <changes> ...]
-#
-# Redis will save the DB if the given number of seconds elapsed and it
-# surpassed the given number of write operations against the DB.
-#
-# Snapshotting can be completely disabled with a single empty string argument
-# as in following example:
-#
-# save ""
-#
-# Unless specified otherwise, by default Redis will save the DB:
-#   * After 3600 seconds (an hour) if at least 1 change was performed
-#   * After 300 seconds (5 minutes) if at least 100 changes were performed
-#   * After 60 seconds if at least 10000 changes were performed
-#
-# You can set these explicitly by uncommenting the following line.
-#
-# save 3600 1 300 100 60 10000
-
-# By default Redis will stop accepting writes if RDB snapshots are enabled
-# (at least one save point) and the latest background save failed.
-# This will make the user aware (in a hard way) that data is not persisting
-# on disk properly, otherwise chances are that no one will notice and some
-# disaster will happen.
-#
-# If the background saving process will start working again Redis will
-# automatically allow writes again.
-#
-# However if you have setup your proper monitoring of the Redis server
-# and persistence, you may want to disable this feature so that Redis will
-# continue to work as usual even if there are problems with disk,
-# permissions, and so forth.
-stop-writes-on-bgsave-error yes
-
-# Compress string objects using LZF when dump .rdb databases?
-# By default compression is enabled as it's almost always a win.
-# If you want to save some CPU in the saving child set it to 'no' but
-# the dataset will likely be bigger if you have compressible values or keys.
-rdbcompression yes
-
-# Since version 5 of RDB a CRC64 checksum is placed at the end of the file.
-# This makes the format more resistant to corruption but there is a performance
-# hit to pay (around 10%) when saving and loading RDB files, so you can disable it
-# for maximum performances.
-#
-# RDB files created with checksum disabled have a checksum of zero that will
-# tell the loading code to skip the check.
-rdbchecksum yes
-
-# Enables or disables full sanitization checks for ziplist and listpack etc when
-# loading an RDB or RESTORE payload. This reduces the chances of a assertion or
-# crash later on while processing commands.
-# Options:
-#   no         - Never perform full sanitization
-#   yes        - Always perform full sanitization
-#   clients    - Perform full sanitization only for user connections.
-#                Excludes: RDB files, RESTORE commands received from the master
-#                connection, and client connections which have the
-#                skip-sanitize-payload ACL flag.
-# The default should be 'clients' but since it currently affects cluster
-# resharding via MIGRATE, it is temporarily set to 'no' by default.
-#
-# sanitize-dump-payload no
-
-# The filename where to dump the DB
-dbfilename dump.rdb
-
-# Remove RDB files used by replication in instances without persistence
-# enabled. By default this option is disabled, however there are environments
-# where for regulations or other security concerns, RDB files persisted on
-# disk by masters in order to feed replicas, or stored on disk by replicas
-# in order to load them for the initial synchronization, should be deleted
-# ASAP. Note that this option ONLY WORKS in instances that have both AOF
-# and RDB persistence disabled, otherwise is completely ignored.
-#
-# An alternative (and sometimes better) way to obtain the same effect is
-# to use diskless replication on both master and replicas instances. However
-# in the case of replicas, diskless is not always an option.
-rdb-del-sync-files no
-
-# The working directory.
-#
-# The DB will be written inside this directory, with the filename specified
-# above using the 'dbfilename' configuration directive.
-#
-# The Append Only File will also be created inside this directory.
-#
-# Note that you must specify a directory here, not a file name.
-dir ./
+# redis.conf file
+port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
 ```
+
+On the first line we specify the port on which the server should run, then we state that we want the server to run in cluster mode, with the `cluster-enabled yes` directive. `cluster-config-file` defines the name of the file where the configuration for this node is stored, in case of a server restart. Finally, `cluster-node-timeout` is the number of milliseconds a node must be unreachable for it to be considered in failure state.
+
+#### Step 2
+Let’s create a cluster on your localhost with three primary shards and three replicas (remember, in production always use two replicas to protect against a split-brain situation). We’ll need to bring up six Redis processes and create a `redis.conf` file for each of them, specifying their port and the rest of the configuration directives above.
+
+First, create six directories:
 ```
-SAVE 60 1000 
+mkdir 7000 7001 7002 7003 7004 7005
 ```
-As an example, this configuration will make Redis automatically dump the data set to disk every 60 seconds if at least 1,000 keys changed in that period. While snapshotting it is a great strategy for the use cases explained above, it leaves a huge possibility for data loss. You can configure snapshots to run every few minutes or after X writes against the database. But if the server crashes, you lose all the writes since the last snapshot was taken. In many use cases, that kind of data loss can be acceptable. But in many others, it is absolutely not. For all of the other use cases, 
 
-#### 2. AOF 
+#### Step 3
+Then create the minimal configuration redis.conf file from above in each one of them, making sure you change the port directive to match the directory name. You should end up with the following directory structure:
 
-Redis offers the AOF persistence option. AOF, or Append Only File, works by logging every incoming write command to disk as it happens. These commands can then be replayed to server startup to reconstruct the original data set. Commands are logged using the same format as the Redis protocol
-itself in an append only fashion. 
+- 7000
+  - redis.conf
+- 7001
+  - redis.conf
+- 7002
+  - redis.conf
+- 7003
+  - redis.conf
+- 7004
+  - redis.conf
+- 7005
+  - redis.conf
 
-The AOF approach provides greater durability than snapshotting and allows you to configure how often the syncs happen. Depending on your durability requirements, or how much data you can afford to lose, you can choose which FYSNC policy is best for your use case: 
-
-- FYSNC every write, the safest policy. The write is acknowledged to the client only after it has been written to the AOF file and flushed to disk. Since in this approach, we are writing to disk synchronously, we can expect a much higher latency than usual. 
-
-- FYSNC every second, the default policy. FYSNC is performed asynchronously in a background thread. So write performance is still high. Choose this option if you need high performance and can afford to lose up to one second worth of writes. 
-
-- No FYSNC. In this case, Redis will log the command to the file descriptor but will not force the OS to flush the data to disk. If the OS crashes, we can lose a few seconds of data. Normally, Linux will flush data every 30 seconds with this configuration. But it's up to the kernel's exact tuning. The relevant configuration directives for AOF are shown on the screen.
+#### Step 4
+Open six terminal tabs and start the servers by going into each one of the directories and starting a Redis instance:
 ```
-############################## APPEND ONLY MODE ###############################
-
-# By default Redis asynchronously dumps the dataset on disk. This mode is
-# good enough in many applications, but an issue with the Redis process or
-# a power outage may result into a few minutes of writes lost (depending on
-# the configured save points).
-#
-# The Append Only File is an alternative persistence mode that provides
-# much better durability. For instance using the default data fsync policy
-# (see later in the config file) Redis can lose just one second of writes in a
-# dramatic event like a server power outage, or a single write if something
-# wrong with the Redis process itself happens, but the operating system is
-# still running correctly.
-#
-# AOF and RDB persistence can be enabled at the same time without problems.
-# If the AOF is enabled on startup Redis will load the AOF, that is the file
-# with the better durability guarantees.
-#
-# Note that changing this value in a config file of an existing database and
-# restarting the server can lead to data loss. A conversion needs to be done
-# by setting it via CONFIG command on a live server first.
-#
-# Please check /operate/oss_and_stack/management/persistence for more information.
-
-appendonly no
-
-# The base name of the append only file.
-#
-# Redis 7 and newer use a set of append-only files to persist the dataset
-# and changes applied to it. There are two basic types of files in use:
-#
-# - Base files, which are a snapshot representing the complete state of the
-#   dataset at the time the file was created. Base files can be either in
-#   the form of RDB (binary serialized) or AOF (textual commands).
-# - Incremental files, which contain additional commands that were applied
-#   to the dataset following the previous file.
-#
-# In addition, manifest files are used to track the files and the order in
-# which they were created and should be applied.
-#
-# Append-only file names are created by Redis following a specific pattern.
-# The file name's prefix is based on the 'appendfilename' configuration
-# parameter, followed by additional information about the sequence and type.
-#
-# For example, if appendfilename is set to appendonly.aof, the following file
-# names could be derived:
-#
-# - appendonly.aof.1.base.rdb as a base file.
-# - appendonly.aof.1.incr.aof, appendonly.aof.2.incr.aof as incremental files.
-# - appendonly.aof.manifest as a manifest file.
-
-appendfilename "appendonly.aof"
-
-# For convenience, Redis stores all persistent append-only files in a dedicated
-# directory. The name of the directory is determined by the appenddirname
-# configuration parameter.
-
-appenddirname "appendonlydir"
-
-# The fsync() call tells the Operating System to actually write data on disk
-# instead of waiting for more data in the output buffer. Some OS will really flush
-# data on disk, some other OS will just try to do it ASAP.
-#
-# Redis supports three different modes:
-#
-# no: don't fsync, just let the OS flush the data when it wants. Faster.
-# always: fsync after every write to the append only log. Slow, Safest.
-# everysec: fsync only one time every second. Compromise.
-#
-# The default is "everysec", as that's usually the right compromise between
-# speed and data safety. It's up to you to understand if you can relax this to
-# "no" that will let the operating system flush the output buffer when
-# it wants, for better performances (but if you can live with the idea of
-# some data loss consider the default persistence mode that's snapshotting),
-# or on the contrary, use "always" that's very slow but a bit safer than
-# everysec.
-#
-# More details please check the following article:
-# http://antirez.com/post/redis-persistence-demystified.html
-#
-# If unsure, use "everysec".
-
-# appendfsync always
-appendfsync everysec
-# appendfsync no
-
-# When the AOF fsync policy is set to always or everysec, and a background
-# saving process (a background save or AOF log background rewriting) is
-# performing a lot of I/O against the disk, in some Linux configurations
-# Redis may block too long on the fsync() call. Note that there is no fix for
-# this currently, as even performing fsync in a different thread will block
-# our synchronous write(2) call.
-#
-# In order to mitigate this problem it's possible to use the following option
-# that will prevent fsync() from being called in the main process while a
-# BGSAVE or BGREWRITEAOF is in progress.
-#
-# This means that while another child is saving, the durability of Redis is
-# the same as "appendfsync no". In practical terms, this means that it is
-# possible to lose up to 30 seconds of log in the worst scenario (with the
-# default Linux settings).
-#
-# If you have latency problems turn this to "yes". Otherwise leave it as
-# "no" that is the safest pick from the point of view of durability.
-
-no-appendfsync-on-rewrite no
-
-# Automatic rewrite of the append only file.
-# Redis is able to automatically rewrite the log file implicitly calling
-# BGREWRITEAOF when the AOF log size grows by the specified percentage.
-#
-# This is how it works: Redis remembers the size of the AOF file after the
-# latest rewrite (if no rewrite has happened since the restart, the size of
-# the AOF at startup is used).
-#
-# This base size is compared to the current size. If the current size is
-# bigger than the specified percentage, the rewrite is triggered. Also
-# you need to specify a minimal size for the AOF file to be rewritten, this
-# is useful to avoid rewriting the AOF file even if the percentage increase
-# is reached but it is still pretty small.
-#
-# Specify a percentage of zero in order to disable the automatic AOF
-# rewrite feature.
-
-auto-aof-rewrite-percentage 100
-auto-aof-rewrite-min-size 64mb
-
-# An AOF file may be found to be truncated at the end during the Redis
-# startup process, when the AOF data gets loaded back into memory.
-# This may happen when the system where Redis is running
-# crashes, especially when an ext4 filesystem is mounted without the
-# data=ordered option (however this can't happen when Redis itself
-# crashes or aborts but the operating system still works correctly).
-#
-# Redis can either exit with an error when this happens, or load as much
-# data as possible (the default now) and start if the AOF file is found
-# to be truncated at the end. The following option controls this behavior.
-#
-# If aof-load-truncated is set to yes, a truncated AOF file is loaded and
-# the Redis server starts emitting a log to inform the user of the event.
-# Otherwise if the option is set to no, the server aborts with an error
-# and refuses to start. When the option is set to no, the user requires
-# to fix the AOF file using the "redis-check-aof" utility before to restart
-# the server.
-#
-# Note that if the AOF file will be found to be corrupted in the middle
-# the server will still exit with an error. This option only applies when
-# Redis will try to read more data from the AOF file but not enough bytes
-# will be found.
-aof-load-truncated yes
-
-# Redis can create append-only base files in either RDB or AOF formats. Using
-# the RDB format is always faster and more efficient, and disabling it is only
-# supported for backward compatibility purposes.
-aof-use-rdb-preamble yes
-
-# Redis supports recording timestamp annotations in the AOF to support restoring
-# the data from a specific point-in-time. However, using this capability changes
-# the AOF format in a way that may not be compatible with existing AOF parsers.
-aof-timestamp-enabled no
+# Terminal tab 1
+cd 7000
+/path/to/redis-server ./redis.conf
+# Terminal tab 2
+cd 7001
+/path/to/redis-server ./redis.conf
 ```
-AOF contains a log of all the operations that modify the database in a format that's easy to understand and parse. When the file gets too big, Redis can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved.
+... and so on.
 
-**Addendum**
-When the file gets too big it can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved. If, for example, we have a counter key foo that changes state every few minutes, we would have hundreds or thousands of log entries for that key for which we don’t care. We only need to know the latest state of the key and can delete the others.
+#### Step 5
+Now that you have six empty Redis servers running, you can join them in a cluster:
+```
+redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 \
+127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 \
+--cluster-replicas 1
+```
+
+Here we list the ports and IP addresses of all six servers and use the `CREATE` command to instruct Redis to join them in a cluster, creating one replica for each primary. Redis-cli will propose a configuration; accept it by typing yes. The cluster will be configured and joined, which means, instances will be bootstrapped into talking with each other.
+
+Finally, you should see a message saying:
+```
+[OK] All 16384 slots covered
+```
+
+This means that there is at least a master instance serving each of the 16384 slots available.
+
+#### Step 6
+Let’s add a new shard to the cluster, which is something you might do when you need to scale.
+
+First, as before, we need to start two new empty Redis instances (primary and its replica) in cluster mode. We create new directories 7006 and 7007 and in them we copy the same `redis.conf` file we used before, making sure we change the port directive in them to the appropriate port (7006 and 7007).
+```
+$ mkdir 7006 7007
+$ cp 7000/redis.conf 7006/redis.conf
+$ cp 7000/redis.conf 7007/redis.conf
+```
+
+Update the port numbers in the files ./7006/redis.conf and ./7007/redis.conf to 7006 and 7007, respectively.
+
+#### Step 7
+Let’s start the Redis instances:
+```
+# Terminal tab 7
+$ cd 7006
+$ redis-server ./redis.conf
+# Terminal tab 8
+$ cd 7007
+$ redis-server ./redis.conf
+```
+
+#### Step 8
+In the next step we join the new primary shard to the cluster with the add-node command. The first parameter is the address of the new shard, and the second parameter is the address of any of the current shards in the cluster.
+```
+redis-cli --cluster add-node 127.0.0.1:7006 127.0.0.1:7000
+```
+
+Note: The Redis commands use the term “Nodes” for what we call “Shards” in this training, so a command named “add-node” would mean “add a shard”.
+
+#### Step 9
+Finally we need to join the new replica shard, with the same add-node command, and a few extra arguments indicating the shard is joining as a replica and what will be its primary shard. If we don’t specify a primary shard Redis will assign one itself.
+
+We can find the IDs of our shards by running the cluster nodes command on any of the shards:
+```
+$ redis-cli -p 7000 cluster nodes
+46a768cfeadb9d2aee91ddd882433a1798f53271 127.0.0.1:7006@17006 master - 0 1616754504000 0 connected
+1f2bc068c7ccc9e408161bd51b695a9a47b890b2 127.0.0.1:7003@17003 slave a138f48fe038b93ea2e186e7a5962fb1fa6e34fa 0 1616754504551 3 connected
+5b4e4be56158cf6103ffa3035024a8d820337973 127.0.0.1:7001@17001 master - 0 1616754505584 2 connected 5461-10922
+a138f48fe038b93ea2e186e7a5962fb1fa6e34fa 127.0.0.1:7002@17002 master - 0 1616754505000 3 connected 10923-16383
+71e078dab649166dcbbcec51520742bc7a5c1992 127.0.0.1:7005@17005 slave 5b4e4be56158cf6103ffa3035024a8d820337973 0 1616754505584 2 connected
+f224ecabedf39d1fffb34fb6c1683f8252f3b7dc 127.0.0.1:7000@17000 myself,master - 0 1616754502000 1 connected 0-5460
+04d71d5eb200353713da475c5c4f0a4253295aa4 127.0.0.1:7004@17004 slave f224ecabedf39d1fffb34fb6c1683f8252f3b7dc 0 1616754505896 1 connected
+```
+
+The port of the primary shard we added in the last step was 7006, and we can see it on the first line. It’s id is 46a768cfeadb9d2aee91ddd882433a1798f53271.
+
+The resulting command is:
+```
+$ redis-cli -p 7000 --cluster add-node 127.0.0.1:7007 127.0.0.1:7000 --cluster-slave --cluster-master-id 46a768cfeadb9d2aee91ddd882433a1798f53271
+```
+
+The flag `cluster-slave` indicates that the shard should join as a replica and `--cluster-master-id` 46a768cfeadb9d2aee91ddd882433a1798f53271 specifies which primary shard it should replicate.
+
+#### Step 10
+Now our cluster has eight shards (four primary and four replica), but if we run the cluster slots command we’ll see that the newly added shards don’t host any hash slots, and thus - data. Let’s assign some hash slots to them:
+```
+$ redis-cli  -p 7000  --cluster reshard 127.0.0.1:7000
+```
+
+We use the command reshard and the address of any shard in the cluster as an argument here. In the next step we’ll be able to choose the shards we’ll be moving slots from and to.
+
+The first question you’ll get is about the number of slots you want to move. If we have 16384 slots in total, and four primary shards, let’s get a quarter of all shards, so the data is distributed equally. 16384 ÷ 4 is 4096, so let’s use that number.
+
+The next question is about the receiving shard id; the ID of the primary shard we want to move the data to, which we learned how to get in the previous step, with the cluster nodes command.
+
+Finally, we need to enter the IDs of the shards we want to copy data from. Alternatively, we can type “all” and the shard will move a number of hash slots from all available primary shards.
+```
+$ redis-cli -p 7000 --cluster reshard 127.0.0.1:7000
+....
+....
+....
+How many slots do you want to move (from 1 to 16384)? 4096
+What is the receiving node ID? 46a768cfeadb9d2aee91ddd882433a1798f53271
+Please enter all the source node IDs.
+  Type 'all' to use all the nodes as source nodes for the hash slots.
+  Type 'done' once you entered all the source nodes IDs.
+Source node #1: all
+
+Ready to move 4096 slots.
+  Source nodes:
+	M: f224ecabedf39d1fffb34fb6c1683f8252f3b7dc 127.0.0.1:7000
+   	slots:[0-5460] (5461 slots) master
+   	1 additional replica(s)
+	M: 5b4e4be56158cf6103ffa3035024a8d820337973 127.0.0.1:7001
+   	slots:[5461-10922] (5462 slots) master
+   	1 additional replica(s)
+	M: a138f48fe038b93ea2e186e7a5962fb1fa6e34fa 127.0.0.1:7002
+   	slots:[10923-16383] (5461 slots) master
+   	1 additional replica(s)
+  Destination node:
+	M: 46a768cfeadb9d2aee91ddd882433a1798f53271 127.0.0.1:7006
+   	slots: (0 slots) master
+   	1 additional replica(s)
+  Resharding plan:
+	Moving slot 5461 from 5b4e4be56158cf6103ffa3035024a8d820337973
+	Moving slot 5462 from 5b4e4be56158cf6103ffa3035024a8d820337973
+
+Do you want to proceed with the proposed reshard plan (yes/no)? 
+Moving slot 5461 from 127.0.0.1:7001 to 127.0.0.1:7006:
+Moving slot 5462 from 127.0.0.1:7001 to 127.0.0.1:7006:
+Moving slot 5463 from 127.0.0.1:7001 to 127.0.0.1:7006:
+....
+....
+....
+```
+
+Once the command finishes we can run the cluster slots command again and we’ll see that our new primary and replica shards have been assigned some hash slots:
+```
+$ redis-cli -p 7000 cluster slots
+```
 
 
-### VIII. Summary 
+### VIII. Using Redis-CLI with a Redis Cluster
+When you use redis-cli to connect to a shard of a Redis Cluster, you are connected to that shard only, and cannot access data from other shards. If you try to access keys from the wrong shard, you will get a MOVED error.
+
+There is a trick you can use with redis-cli so you don’t have to open connections to all the shards, but instead you let it do the connect and reconnect work for you. It’s the redis-cli cluster support mode, triggered by the -c switch:
+```
+$ redis-cli -p 7000 -c
+```
+When in cluster mode, if the client gets an (error) MOVED 15495 127.0.0.1:7002 error response from the shard it’s connected to, it will simply reconnect to the address returned in the error response, in this case 127.0.0.1:7002.
+
+Now it’s your turn: use redis-cli cluster mode to connect to your cluster and try accessing keys in different shards. Observe the response messages.
+
+### IX. Redis Cluster and Client Libraries
+
+
+
+### X. Summary 
 If you do not make heavy usage on Redis or the basic tunning works fine, your journey should probably end here. Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting. 
 
 
-### IX. Bibliography 
+### XI. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
 3. [Node-Redis](https://www.npmjs.com/package/redis)
