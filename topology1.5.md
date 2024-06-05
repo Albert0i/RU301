@@ -74,6 +74,7 @@ Redis has a client-server architecture and uses a request-response model. Applic
 The role of a Redis client library is to act as an intermediary between your application and the Redis server. Client libraries perform the following duties, implement the Redis wire protocol, the format used to send requests and receive responses from the Redis server, provide an idiomatic API for using Redis commands from a particular programming language, and managing the connection to Redis. Redis clients communicate with the Redis server over TCP using a protocol called RESP, Redis Serialization Protocol, designed specifically for Redis. The RESP protocol is simple and text based, so it is easily read by humans as well as machines. 
 
 **Addendum**
+
 In javasscript programming, there are two popular client libraries, ie: [Node-Redis](https://www.npmjs.com/package/redis) and [ioredis](https://www.npmjs.com/package/ioredis). 
 
 Node-Redis has been around for a longer time and has a large user base, making it a mature and well-tested library and has an active community that provides support and contributes to its ongoing development. ioredis is a relatively newer library compared to Node-Redis, which means it may have a smaller user base and potentially fewer community resources, it may have a slightly more limited feature set compared to Node-Redis.
