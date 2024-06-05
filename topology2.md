@@ -115,19 +115,30 @@ In the second tab you should see that the command was already sent to the replic
 ```
 
 #### Step 4
-Keep the instances running, or at least their configuration files around. We’ll need them for the next exercise.
+Keep the instances running, or at least their configuration files around. We’ll need them for the next section.
 
 
-### IV. Redis Clients
-Redis has a client-server architecture and uses a request-response model. Applications send requests to the Redis server, which processes them and returns responses for each. 
+### IV. Understanding Sentinels
+In the beginning of this article, we learned that we can’t have high availability without replication and automatic failover. We covered replication in the previous two sections, and now we’ll explain Sentinel - a tool that provides the automatic failover.
 
-The role of a Redis client library is to act as an intermediary between your application and the Redis server. Client libraries perform the following duties, implement the Redis wire protocol, the format used to send requests and receive responses from the Redis server, provide an idiomatic API for using Redis commands from a particular programming language, and managing the connection to Redis. Redis clients communicate with the Redis server over TCP using a protocol called RESP, Redis Serialization Protocol, designed specifically for Redis. The [RESP](https://redis.io/docs/latest/develop/reference/protocol-spec/) protocol is simple and text based, so it is easily read by humans as well as machines. 
+Redis Sentinel is a distributed system consisting of multiple Redis instances started in sentinel mode. We call these instances **Sentinels**.
 
-**Addendum**
+The group of Sentinels monitors a primary Redis instance and its replicas. If the sentinels detect that the primary instance has failed, the sentinel processes will look for the replica that has the latest data and will promote that replica to be the new primary. This way, the clients talking to the database will be able to reconnect to the new primary and continue functioning as usual, with minimal disruption to the users.
 
-In javascript programming, there are two popular client libraries, ie: [Node-Redis](https://www.npmjs.com/package/redis) and [ioredis](https://www.npmjs.com/package/ioredis). Node-Redis has been around for a longer time and has a large user base, making it a mature and well-tested library and has an active community that provides support and contributes to its ongoing development. ioredis is a relatively newer library compared to Node-Redis, which means it may have a smaller user base and potentially fewer community resources, it may have a slightly more limited feature set compared to Node-Redis.
+![alt Sentinel Quorum Diagram](homebrew-ha-with-sentinels/img/sentinel.png)
 
-Both of them support Redis Cluster but only ioredis supports replication with Sentinel. 
+#### Deciding that a primary instance is down
+In order for the Sentinels to be able to decide that a primary instance is down we need to have enough Sentinels agree that the server is unreachable from their point of view.
+
+Having a number of Sentinels agreeing that they need to take an action is called **reaching a quorum**. If the Sentinels can’t reach quorum, they cannot decide that the primary has failed. The exact number of Sentinels needed for quorum is configurable.
+
+#### Triggering a failover
+Once the Sentinels have decided that a primary instance is down, they need to elect and authorize a leader (a Sentinel instance) that will do the failover. A leader can only be chosen if the majority of the Sentinels agree on it.
+
+In the final step, the leader will reconfigure the chosen replica to become a primary by sending the command `REPLICAOF NO ONE` and it will reconfigure the other replicas to follow the newly promoted primary.
+
+#### Sentinel and Client Libraries
+If you have a system that uses Sentinel for high availability, then you need to have a client that supports Sentinel. Not all libraries have this feature, but most of the popular ones do, so make sure you add it to your list of requirements when choosing your library.
 
 
 ### V. Client Performance Improvements
