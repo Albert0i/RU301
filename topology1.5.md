@@ -222,6 +222,99 @@ As an example, this configuration will make Redis automatically dump the data se
 Redis offers the AOF persistence option. AOF, or Append Only File, works by logging every incoming write command to disk as it happens. These commands can then be replayed to server startup to reconstruct the original data set. Commands are logged using the same format as the Redis protocol
 itself in an append only fashion. The AOF approach provides greater durability than snapshotting and allows you to configure how often the syncs happen. Depending on your durability requirements, or how much data you can afford to lose, you can choose which FYSNC policy is best for your use case: FYSNC every write, the safest policy. The write is acknowledged to the client only after it has been written to the AOF file and flushed to disk. Since in this approach, we are writing to disk synchronously, we can expect a much higher latency than usual. FYSNC every second, the default policy. FYSNC is performed asynchronously in a background thread. So write performance is still high. Choose this option if you need high performance and can afford to lose up to one second worth of writes. No FYSNC. In this case, Redis will log the command to the file descriptor but will not force the OS to flush the data to disk. If the OS crashes, we can lose a few seconds of data. Normally, Linux will flush data every 30 seconds with this configuration. But it's up to the kernel's exact tuning. The relevant configuration directives for AOF are shown on the screen.
 ```
+################################ SNAPSHOTTING  ################################
+
+# Save the DB to disk.
+#
+# save <seconds> <changes> [<seconds> <changes> ...]
+#
+# Redis will save the DB if the given number of seconds elapsed and it
+# surpassed the given number of write operations against the DB.
+#
+# Snapshotting can be completely disabled with a single empty string argument
+# as in following example:
+#
+# save ""
+#
+# Unless specified otherwise, by default Redis will save the DB:
+#   * After 3600 seconds (an hour) if at least 1 change was performed
+#   * After 300 seconds (5 minutes) if at least 100 changes were performed
+#   * After 60 seconds if at least 10000 changes were performed
+#
+# You can set these explicitly by uncommenting the following line.
+#
+# save 3600 1 300 100 60 10000
+
+# By default Redis will stop accepting writes if RDB snapshots are enabled
+# (at least one save point) and the latest background save failed.
+# This will make the user aware (in a hard way) that data is not persisting
+# on disk properly, otherwise chances are that no one will notice and some
+# disaster will happen.
+#
+# If the background saving process will start working again Redis will
+# automatically allow writes again.
+#
+# However if you have setup your proper monitoring of the Redis server
+# and persistence, you may want to disable this feature so that Redis will
+# continue to work as usual even if there are problems with disk,
+# permissions, and so forth.
+stop-writes-on-bgsave-error yes
+
+# Compress string objects using LZF when dump .rdb databases?
+# By default compression is enabled as it's almost always a win.
+# If you want to save some CPU in the saving child set it to 'no' but
+# the dataset will likely be bigger if you have compressible values or keys.
+rdbcompression yes
+
+# Since version 5 of RDB a CRC64 checksum is placed at the end of the file.
+# This makes the format more resistant to corruption but there is a performance
+# hit to pay (around 10%) when saving and loading RDB files, so you can disable it
+# for maximum performances.
+#
+# RDB files created with checksum disabled have a checksum of zero that will
+# tell the loading code to skip the check.
+rdbchecksum yes
+
+# Enables or disables full sanitization checks for ziplist and listpack etc when
+# loading an RDB or RESTORE payload. This reduces the chances of a assertion or
+# crash later on while processing commands.
+# Options:
+#   no         - Never perform full sanitization
+#   yes        - Always perform full sanitization
+#   clients    - Perform full sanitization only for user connections.
+#                Excludes: RDB files, RESTORE commands received from the master
+#                connection, and client connections which have the
+#                skip-sanitize-payload ACL flag.
+# The default should be 'clients' but since it currently affects cluster
+# resharding via MIGRATE, it is temporarily set to 'no' by default.
+#
+# sanitize-dump-payload no
+
+# The filename where to dump the DB
+dbfilename dump.rdb
+
+# Remove RDB files used by replication in instances without persistence
+# enabled. By default this option is disabled, however there are environments
+# where for regulations or other security concerns, RDB files persisted on
+# disk by masters in order to feed replicas, or stored on disk by replicas
+# in order to load them for the initial synchronization, should be deleted
+# ASAP. Note that this option ONLY WORKS in instances that have both AOF
+# and RDB persistence disabled, otherwise is completely ignored.
+#
+# An alternative (and sometimes better) way to obtain the same effect is
+# to use diskless replication on both master and replicas instances. However
+# in the case of replicas, diskless is not always an option.
+rdb-del-sync-files no
+
+# The working directory.
+#
+# The DB will be written inside this directory, with the filename specified
+# above using the 'dbfilename' configuration directive.
+#
+# The Append Only File will also be created inside this directory.
+#
+# Note that you must specify a directory here, not a file name.
+dir ./
 ```
 AOF contains a log of all the operations that modify the database in a format that's easy to understand and parse. When the file gets too big, Redis can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved.
 
