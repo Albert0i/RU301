@@ -41,10 +41,10 @@ $ touch primary.conf  # Create the configuration file
 Now open the `primary.conf` file with your favourite text editor and set the following configuration directives:
 ```
 # Create a strong password here
-requirepass a_strong_password
+requirepass 123456
 
 # AUTH password of the primary instance in case this instance becomes a replica
-masterauth a_strong_password
+masterauth 123456
 
 # Enable AOF file persistence
 appendonly yes
@@ -73,10 +73,10 @@ port 6380
 replicaof 127.0.0.1 6379
 
 # AUTH password of the primary instance
-masterauth a_strong_password
+masterauth 123456
 
 # AUTH password for the replica instance
-requirepass a_strong_password
+requirepass 123456
 ```
 
 And let’s start the replica:
@@ -98,7 +98,7 @@ $ redis-cli -p 6380
 
 Authenticate on both tabs by running the command AUTH followed by your password:
 ```
-AUTH a_strong_password
+AUTH 123456
 ```
 
 On the second (replica) tab run the `MONITOR` command which will allow you to see every command executed against that instance.
