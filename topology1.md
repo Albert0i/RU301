@@ -256,7 +256,7 @@ stop-writes-on-bgsave-error yes
 
 
 ### Epilogue 
-If you do not make heavy usage on Redis, you journey should probably end here. In addition, if Redis works for you only a cache or session store, you can set: 
+If you do not make heavy usage on Redis, your journey should probably end here. In addition, if Redis works for you only a cache or session store, you can set: 
 ```
 save ""
 appendonly no
