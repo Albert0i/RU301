@@ -143,7 +143,7 @@ If you have a system that uses Sentinel for high availability, then you need to 
 
 ### V. Replication with Sentinels 
 #### Step 1
-If you still have the primary and replica instances we set up in the previous exercise (3.2) - great! We’ll reuse them to create our Sentinel setup. If not - refer back to the instructions and go through them again.
+If you still have the primary and replica instances we set up in the previous section - great! We’ll reuse them to create our Sentinel setup. If not - refer back to the instructions and go through them again.
 
 When done, you will have a primary Redis instance with one replica.
 
