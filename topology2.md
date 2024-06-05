@@ -212,162 +212,33 @@ redis> SENTINEL get-master-addr-by-name myprimary
 
 
 ### VI. Clustering In Redis
-r signing up for Redis Cloud, our managed
-service, and let us do the scaling for you.
-Of course, that route is not for everyone.
-And as I said, there's a lot to learn here.
-So let's dive in.
-We'll, start with scalability.
-Here's one definition.
-Scalability is the property of a system
-to handle a growing amount of work
-by adding resources to the system.
-The two most common scaling strategies
-are vertical scaling and horizontal scaling.
-Vertical scaling, or also called scaling up,
-means adding more resources like CPUs or memory to your server.
-Horizontal scaling, or scaling out,
-implies adding more servers to your pool of resources.
-It's the difference between just getting a bigger server
-and deploying a whole fleet of servers.
-Let's take an example.
-Suppose you have a server with 128 gigabytes of RAM,
-but you know that your database will need
-to store 300 gigabytes of data.
-In this case, you'll have two choices.
-You can either add more RAM to your server
-so it can fit the 300 gigabyte data set,
-or you can add two more servers and split
-the 300 gigabytes of data between the three of them.
-Hitting your server's RAM limit is
-one reason you might want to scale up or out.
-But reaching the performance limits in terms of throughput
-or operations per second is another.
-Since Redis is mostly single-threaded,
-a single Redis Server instance cannot make use of the multiple
-cores of your server's CPU for command processing.
-But if we split the data between two Redis instances,
-our system can process requests in parallel,
-effectively doubling the throughput.
-In fact, performance will scale close to linearly
-by adding more Redis instances to the system.
-This pattern of splitting data between multiple servers
-for the purpose of scaling is called sharding.
-The resulting servers or processes
-that hold chunks of the data are called shards.
-This performance increase sounds amazing,
-but it adds some complexity.
-If we divide and distribute our data across two shards, which
-are just two Redis Server instances,
-how will we know where to look for each key?
-We need to have a way to consistently map
-a key to a specific shard.
-There are multiple ways to do this.
-And different databases adapt different strategies.
-The one Redis uses is called algorithmic sharding.
-And this is how it works.
-Define the shard for a given key.
-We hash the key and then mod the result
-by the total number of shards.
-Because we're using a deterministic hash function,
-this function will always assign a given key to the same shards.
-But what happens if we want to increase our shards count even
-further, a process commonly called resharding?
-Let's say we add one new shard so that our total number
-of shards is three.
-Now, when a client tries to read the key foo,
-they will run the hash function and mod the number of shards
-as before.
-This time, the number of shards is different
-and we're modding with three instead of two.
-Understandably, the result may be different,
-pointing us to the wrong shard.
-Resharding is a common issue with the algorithmic sharding
-strategy.
-This can be solved by rehashing all the keys in the keys base
-and moving them to the shard appropriate to the new shard
-count.
-This is not a trivial task, though.
-And it can require a lot of time and resources,
-during which the database will not
-be able to reach its full performance
-or might even become unavailable.
-Redis uses a clever approach to solve this problem--
-a logical unit that sits between a key and a shard
-called a hashslot.
-The total number of hashslots in a database
-is always 16,384, or 16K.
-The hashslots are divided roughly even across the shards.
-So, for example, slots 0 through 8,000
-might be assigned to shard 1, and slots 8,001 to 16,384
-might be assigned to shard 2.
-In a Redis cluster, we actually mod by the number of hashslots,
-not by the number of shards.
-Each key is assigned to a hashslot.
-When we do need to reshard, we simply move hashslots from one
-shard to another, distributing the data
-as required across the different Redis instances.
-Now that we know what sharding is and how
-it works in a Redis cluster, we can move on
-to high availability.
-Redis cluster is what provides sharding and high availability
-in open source Redis.
-High availability refers to the cluster's ability
-to remain operational even in the face of certain failures.
-For example, the cluster can detect
-when a primary shard fails and promote a replica to a primary
-without any manual intervention from the outside.
-But how does it do it?
-How does it that a primary shard has failed?
-And how does it promote its replica to the new primary?
-Say we have one replica for every primary shard.
-If all our data is divided between three Redis Servers,
-we would need a six-membered cluster,
-with three primary shards and three replicas.
-All six shards are connected to each other over TCP
-and constantly ping each other and exchange messages.
-These messages allow the cluster to determine
-which shards are alive.
-When enough shards report that a given primary shard is not
-responding to them, they can agree to trigger a fail-over
-and promote the shard's replica to become the new primary.
-How many shards need to agree that a fellow shard is offline
-before fail-over is triggered? Well that's configurable.
-And you could set it up when you create a cluster.
-But there are some very important guidelines
-that you need to follow.
-To prevent something called a split brain situation
-in a Redis cluster, always keep an odd number of primary shards
-and two replicas per primary shard.
-Let me show you what I mean.
-The group on the left side will not
-be able to talk to the shards in the group on the right side.
-So the cluster will think that they are offline and will
-trigger a fail-over of any primary shards,
-resulting in a left side with all primary shards.
-On the right side, the three shards
-will also see that the shards on the left as offline,
-and will trigger a fail-over on any primary shards that
-were on the left side, resulting in a right side
-of all primary shards.
-Both sides, thinking they have all the primaries,
-will continue to receive client requests that modify data.
-And that is a problem, because maybe client A sets the key foo
-to bar on the left side, but a client B sets the same key's
-value to baz on the right side.
-When the network partition is removed
-and the shards try to rejoin, we will have a conflict,
-because we have two shards holding different data,
-claiming to be the primary, and we wouldn't
-know which data is valid.
-This is called a split brain situation,
-and it's a very common issue in the world of distributed
-systems.
-A popular solution is to always keep an odd number
-of shards in your cluster.
-Again, to prevent this kind of conflict,
-always keep the odd number of primary shards
-and two replicas per primary shard.
+Before we jump into the details, let's first address the elephant in the room. *DBAAS* offerings, or Database as a Service in the cloud. No doubt it's useful to know how Redis scales and how you might deploy it. But deploying and maintaining a Redis cluster is a fair amount of work.
+
+So if you don't want to deploy and manage Redis yourself, then consider sir signing up for Redis Cloud, our managed service, and let us do the scaling for you. Of course, that route is not for everyone. And as I said, there's a lot to learn here. So let's dive in. We'll, start with scalability. Here's one definition.
+```
+Scalability is the property of a system to handle a growing amount of work by adding resources to the system.
+```
+The two most common scaling strategies are *vertical scaling* and *horizontal scaling*. Vertical scaling, or also called scaling up, means adding more resources like CPUs or memory to your server. Horizontal scaling, or scaling out, implies adding more servers to your pool of resources. It's the difference between just getting a bigger server and deploying a whole fleet of servers.
+
+Let's take an example. Suppose you have a server with 128 gigabytes of RAM, but you know that your database will need to store 300 gigabytes of data. In this case, you'll have two choices. You can either add more RAM to your server so it can fit the 300 gigabyte data set, or you can add two more servers and split the 300 gigabytes of data between the three of them.
+
+Hitting your server's RAM limit is one reason you might want to scale up or out. But reaching the performance limits in terms of throughput or operations per second is another. Since Redis is mostly single-threaded, a single Redis Server instance cannot make use of the multiple cores of your server's CPU for command processing. But if we split the data between two Redis instances, our system can process requests in parallel, effectively doubling the throughput.
+
+In fact, performance will scale close to linearly by adding more Redis instances to the system. This pattern of splitting data between multiple servers for the purpose of scaling is called *sharding*. The resulting servers or processes that hold chunks of the data are called **shards**. This performance increase sounds amazing,but it adds some complexity. If we divide and distribute our data across two shards, which are just two Redis Server instances, how will we know where to look for each key?
+
+We need to have a way to consistently map a key to a specific shard. There are multiple ways to do this. And different databases adapt different strategies. The one Redis uses is called *algorithmic sharding*. And this is how it works. Define the shard for a given key. We hash the key and then mod the result by the total number of shards. Because we're using a deterministic hash function, this function will always assign a given key to the same shards. But what happens if we want to increase our shards count even further, a process commonly called *resharding*? Let's say we add one new shard so that our total number of shards is three. Now, when a client tries to read the key `foo`, they will run the hash function and mod the number of shards as before. This time, the number of shards is different and we're modding with three instead of two.
+Understandably, the result may be different, pointing us to the wrong shard.
+
+Resharding is a common issue with the algorithmic sharding strategy. This can be solved by rehashing all the keys in the keys base and moving them to the shard appropriate to the new shard count. This is not a trivial task, though. And it can require a lot of time and resources, during which the database will not be able to reach its full performance or might even become unavailable. Redis uses a clever approach to solve this problem-- a logical unit that sits between a key and a shard called a *hashslot*. 
+
+The total number of hashslots in a database is always 16,384, or 16K. The hashslots are divided roughly even across the shards. So, for example, slots 0 through 8,000 might be assigned to shard 1, and slots 8,001 to 16,384 might be assigned to shard 2. In a Redis cluster, we actually mod by the number of hashslots, not by the number of shards. Each key is assigned to a hashslot. When we do need to reshard, we simply move hashslots from one shard to another, distributing the data as required across the different Redis instances. Now that we know what sharding is and how it works in a Redis cluster, we can move on to high availability. Redis cluster is what provides sharding and high availability in open source Redis. High availability refers to the cluster's ability to remain operational even in the face of certain failures. For example, the cluster can detect when a primary shard fails and promote a replica to a primary without any manual intervention from the outside. But how does it do it? How does it that a primary shard has failed? And how does it promote its replica to the new primary? Say we have one replica for every primary shard.
+
+If all our data is divided between three Redis Servers, we would need a six-membered cluster, with three primary shards and three replicas. All six shards are connected to each other over TCP and constantly ping each other and exchange messages. These messages allow the cluster to determine which shards are alive. When enough shards report that a given primary shard is not responding to them, they can agree to trigger a fail-over and promote the shard's replica to become the new primary. How many shards need to agree that a fellow shard is offline before fail-over is triggered? Well that's configurable. And you could set it up when you create a cluster. But there are some very important guidelines that you need to follow. To prevent something called a split brain situation in a Redis cluster, always keep an odd number of primary shards and two replicas per primary shard. Let me show you what I mean. The group on the left side will not be able to talk to the shards in the group on the right side. So the cluster will think that they are offline and will trigger a fail-over of any primary shards,
+resulting in a left side with all primary shards. On the right side, the three shards will also see that the shards on the left as offline, and will trigger a fail-over on any primary shards that were on the left side, resulting in a right side
+of all primary shards. Both sides, thinking they have all the primaries, will continue to receive client requests that modify data. And that is a problem, because maybe client A sets the key foo to bar on the left side, but a client B sets the same key's
+value to baz on the right side. When the network partition is removed and the shards try to rejoin, we will have a conflict, because we have two shards holding different data, claiming to be the primary, and we wouldn't
+know which data is valid. This is called a split brain situation, and it's a very common issue in the world of distributed systems. A popular solution is to always keep an odd number of shards in your cluster. Again, to prevent this kind of conflict, always keep the odd number of primary shards and two replicas per primary shard.
+
 
 ### VII. Persistence Options in Redis
 If a Redis server that only stores data in RAM is restarted, all data is lost. To prevent such data loss, there needs to be some mechanism for persisting the data to disk. Redis provides two of them, snapshotting and an append-only file, or AOF. You can configure your Redis instance
