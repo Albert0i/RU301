@@ -216,12 +216,6 @@ But even forking can be time consuming if the data set is large. This may result
 with the `dbfilename` and `dir` configuration directives, either through the redis.conf file or through the Redis CLI. And of course, you can configure how often you want to create a snapshot.
 Here's an excerpt from the redis.conf file showing the default values.
 ```
-```
-As an example, this configuration will make Redis automatically dump the data set to disk every 60 seconds if at least 1,000 keys changed in that period. While snapshotting it is a great strategy for the use cases explained above, it leaves a huge possibility for data loss. You can configure snapshots to run every few minutes or after X writes against the database. But if the server crashes, you lose all the writes since the last snapshot was taken. In many use cases, that kind of data loss can be acceptable. But in many others, it is absolutely not. For all of the other use cases, 
-
-Redis offers the AOF persistence option. AOF, or Append Only File, works by logging every incoming write command to disk as it happens. These commands can then be replayed to server startup to reconstruct the original data set. Commands are logged using the same format as the Redis protocol
-itself in an append only fashion. The AOF approach provides greater durability than snapshotting and allows you to configure how often the syncs happen. Depending on your durability requirements, or how much data you can afford to lose, you can choose which FYSNC policy is best for your use case: FYSNC every write, the safest policy. The write is acknowledged to the client only after it has been written to the AOF file and flushed to disk. Since in this approach, we are writing to disk synchronously, we can expect a much higher latency than usual. FYSNC every second, the default policy. FYSNC is performed asynchronously in a background thread. So write performance is still high. Choose this option if you need high performance and can afford to lose up to one second worth of writes. No FYSNC. In this case, Redis will log the command to the file descriptor but will not force the OS to flush the data to disk. If the OS crashes, we can lose a few seconds of data. Normally, Linux will flush data every 30 seconds with this configuration. But it's up to the kernel's exact tuning. The relevant configuration directives for AOF are shown on the screen.
-```
 ################################ SNAPSHOTTING  ################################
 
 # Save the DB to disk.
@@ -315,6 +309,172 @@ rdb-del-sync-files no
 #
 # Note that you must specify a directory here, not a file name.
 dir ./
+```
+As an example, this configuration will make Redis automatically dump the data set to disk every 60 seconds if at least 1,000 keys changed in that period. While snapshotting it is a great strategy for the use cases explained above, it leaves a huge possibility for data loss. You can configure snapshots to run every few minutes or after X writes against the database. But if the server crashes, you lose all the writes since the last snapshot was taken. In many use cases, that kind of data loss can be acceptable. But in many others, it is absolutely not. For all of the other use cases, 
+
+Redis offers the AOF persistence option. AOF, or Append Only File, works by logging every incoming write command to disk as it happens. These commands can then be replayed to server startup to reconstruct the original data set. Commands are logged using the same format as the Redis protocol
+itself in an append only fashion. The AOF approach provides greater durability than snapshotting and allows you to configure how often the syncs happen. Depending on your durability requirements, or how much data you can afford to lose, you can choose which FYSNC policy is best for your use case: FYSNC every write, the safest policy. The write is acknowledged to the client only after it has been written to the AOF file and flushed to disk. Since in this approach, we are writing to disk synchronously, we can expect a much higher latency than usual. FYSNC every second, the default policy. FYSNC is performed asynchronously in a background thread. So write performance is still high. Choose this option if you need high performance and can afford to lose up to one second worth of writes. No FYSNC. In this case, Redis will log the command to the file descriptor but will not force the OS to flush the data to disk. If the OS crashes, we can lose a few seconds of data. Normally, Linux will flush data every 30 seconds with this configuration. But it's up to the kernel's exact tuning. The relevant configuration directives for AOF are shown on the screen.
+```
+############################## APPEND ONLY MODE ###############################
+
+# By default Redis asynchronously dumps the dataset on disk. This mode is
+# good enough in many applications, but an issue with the Redis process or
+# a power outage may result into a few minutes of writes lost (depending on
+# the configured save points).
+#
+# The Append Only File is an alternative persistence mode that provides
+# much better durability. For instance using the default data fsync policy
+# (see later in the config file) Redis can lose just one second of writes in a
+# dramatic event like a server power outage, or a single write if something
+# wrong with the Redis process itself happens, but the operating system is
+# still running correctly.
+#
+# AOF and RDB persistence can be enabled at the same time without problems.
+# If the AOF is enabled on startup Redis will load the AOF, that is the file
+# with the better durability guarantees.
+#
+# Note that changing this value in a config file of an existing database and
+# restarting the server can lead to data loss. A conversion needs to be done
+# by setting it via CONFIG command on a live server first.
+#
+# Please check /operate/oss_and_stack/management/persistence for more information.
+
+appendonly no
+
+# The base name of the append only file.
+#
+# Redis 7 and newer use a set of append-only files to persist the dataset
+# and changes applied to it. There are two basic types of files in use:
+#
+# - Base files, which are a snapshot representing the complete state of the
+#   dataset at the time the file was created. Base files can be either in
+#   the form of RDB (binary serialized) or AOF (textual commands).
+# - Incremental files, which contain additional commands that were applied
+#   to the dataset following the previous file.
+#
+# In addition, manifest files are used to track the files and the order in
+# which they were created and should be applied.
+#
+# Append-only file names are created by Redis following a specific pattern.
+# The file name's prefix is based on the 'appendfilename' configuration
+# parameter, followed by additional information about the sequence and type.
+#
+# For example, if appendfilename is set to appendonly.aof, the following file
+# names could be derived:
+#
+# - appendonly.aof.1.base.rdb as a base file.
+# - appendonly.aof.1.incr.aof, appendonly.aof.2.incr.aof as incremental files.
+# - appendonly.aof.manifest as a manifest file.
+
+appendfilename "appendonly.aof"
+
+# For convenience, Redis stores all persistent append-only files in a dedicated
+# directory. The name of the directory is determined by the appenddirname
+# configuration parameter.
+
+appenddirname "appendonlydir"
+
+# The fsync() call tells the Operating System to actually write data on disk
+# instead of waiting for more data in the output buffer. Some OS will really flush
+# data on disk, some other OS will just try to do it ASAP.
+#
+# Redis supports three different modes:
+#
+# no: don't fsync, just let the OS flush the data when it wants. Faster.
+# always: fsync after every write to the append only log. Slow, Safest.
+# everysec: fsync only one time every second. Compromise.
+#
+# The default is "everysec", as that's usually the right compromise between
+# speed and data safety. It's up to you to understand if you can relax this to
+# "no" that will let the operating system flush the output buffer when
+# it wants, for better performances (but if you can live with the idea of
+# some data loss consider the default persistence mode that's snapshotting),
+# or on the contrary, use "always" that's very slow but a bit safer than
+# everysec.
+#
+# More details please check the following article:
+# http://antirez.com/post/redis-persistence-demystified.html
+#
+# If unsure, use "everysec".
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+
+# When the AOF fsync policy is set to always or everysec, and a background
+# saving process (a background save or AOF log background rewriting) is
+# performing a lot of I/O against the disk, in some Linux configurations
+# Redis may block too long on the fsync() call. Note that there is no fix for
+# this currently, as even performing fsync in a different thread will block
+# our synchronous write(2) call.
+#
+# In order to mitigate this problem it's possible to use the following option
+# that will prevent fsync() from being called in the main process while a
+# BGSAVE or BGREWRITEAOF is in progress.
+#
+# This means that while another child is saving, the durability of Redis is
+# the same as "appendfsync no". In practical terms, this means that it is
+# possible to lose up to 30 seconds of log in the worst scenario (with the
+# default Linux settings).
+#
+# If you have latency problems turn this to "yes". Otherwise leave it as
+# "no" that is the safest pick from the point of view of durability.
+
+no-appendfsync-on-rewrite no
+
+# Automatic rewrite of the append only file.
+# Redis is able to automatically rewrite the log file implicitly calling
+# BGREWRITEAOF when the AOF log size grows by the specified percentage.
+#
+# This is how it works: Redis remembers the size of the AOF file after the
+# latest rewrite (if no rewrite has happened since the restart, the size of
+# the AOF at startup is used).
+#
+# This base size is compared to the current size. If the current size is
+# bigger than the specified percentage, the rewrite is triggered. Also
+# you need to specify a minimal size for the AOF file to be rewritten, this
+# is useful to avoid rewriting the AOF file even if the percentage increase
+# is reached but it is still pretty small.
+#
+# Specify a percentage of zero in order to disable the automatic AOF
+# rewrite feature.
+
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+# An AOF file may be found to be truncated at the end during the Redis
+# startup process, when the AOF data gets loaded back into memory.
+# This may happen when the system where Redis is running
+# crashes, especially when an ext4 filesystem is mounted without the
+# data=ordered option (however this can't happen when Redis itself
+# crashes or aborts but the operating system still works correctly).
+#
+# Redis can either exit with an error when this happens, or load as much
+# data as possible (the default now) and start if the AOF file is found
+# to be truncated at the end. The following option controls this behavior.
+#
+# If aof-load-truncated is set to yes, a truncated AOF file is loaded and
+# the Redis server starts emitting a log to inform the user of the event.
+# Otherwise if the option is set to no, the server aborts with an error
+# and refuses to start. When the option is set to no, the user requires
+# to fix the AOF file using the "redis-check-aof" utility before to restart
+# the server.
+#
+# Note that if the AOF file will be found to be corrupted in the middle
+# the server will still exit with an error. This option only applies when
+# Redis will try to read more data from the AOF file but not enough bytes
+# will be found.
+aof-load-truncated yes
+
+# Redis can create append-only base files in either RDB or AOF formats. Using
+# the RDB format is always faster and more efficient, and disabling it is only
+# supported for backward compatibility purposes.
+aof-use-rdb-preamble yes
+
+# Redis supports recording timestamp annotations in the AOF to support restoring
+# the data from a specific point-in-time. However, using this capability changes
+# the AOF format in a way that may not be compatible with existing AOF parsers.
+aof-timestamp-enabled no
 ```
 AOF contains a log of all the operations that modify the database in a format that's easy to understand and parse. When the file gets too big, Redis can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved.
 
