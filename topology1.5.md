@@ -69,6 +69,9 @@ Note that modifying the configuration on the fly has no effects on the `redis.co
 
 
 ### IV. Redis Clients
+Redis has a client-server architecture and uses a request-response model. Applications send requests to the Redis server, which processes them and returns responses for each. 
+
+The role of a Redis client library is to act as an intermediary between your application and the Redis server. Client libraries perform the following duties, implement the Redis wire protocol, the format used to send requests and receive responses from the Redis server, provide an idiomatic API for using Redis commands from a particular programming language, and managing the connection to Redis. Redis clients communicate with the Redis server over TCP using a protocol called RESP, Redis Serialization Protocol, designed specifically for Redis. The RESP protocol is simple and text based, so it is easily read by humans as well as machines. 
 
 
 #### Basic Replication 
@@ -91,12 +94,8 @@ Note that modifying the configuration on the fly has no effects on the `redis.co
 
 The Command Line Tool: Redis-CLI
 ================================
-
 Configuring a Redis Server
 ==========================
-
-
-
 Redis Clients
 =============
 The Redis.io client page lists over 200 client libraries
