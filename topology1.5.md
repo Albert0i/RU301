@@ -213,7 +213,7 @@ different versions of the data set in case of disasters. You can also use these 
 Creating an RDB file requires a lot of disk IO. If performed in the main Redis process, this would reduce the server's performance. That's why this work is done by a forked child process.
 But even forking can be time consuming if the data set is large. This may result in decreased performance or in Redis failing to serve clients for a few milliseconds or even up to a second for very large data sets. Understanding this should help you decide whether this solution makes sense for your requirements. You can configure the name and location of the RDB file
 with the `dbfilename` and `dir` configuration directives, either through the redis.conf file or through the Redis CLI. And of course, you can configure how often you want to create a snapshot.
-Here's an excerpt from the redis.conf file showing the default values.
+Here's an excerpt from the `redis.conf `file showing the default values.
 ```
 ################################ SNAPSHOTTING  ################################
 
