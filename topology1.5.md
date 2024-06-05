@@ -20,6 +20,24 @@ You are more likely to bump up against memory or network limitations before hitt
 
 The reading and especially writing to a socket are expensive operations. So in Redis version 6.0, multi-threaded I/O was introduced. When this feature is enabled, Redis can delegate the time spent reading and writing to I/O sockets over to other threads, freeing up cycles for storing and retrieving data, and boosting overall performance by up to a factor of two for some workloads.
 
+
+### II. The Command Line Tool: Redis-CLI
+The Redis CLI is a command line tool used to interact with the Redis server. There are two ways to use the Redis CLI, an interactive mode where the user types commands and sees the replies, and another mode where the command is provided as an argument to Redis CLI, executed, and results are sent to their standard output.
+```
+redis-cli -h 172.22.0.3 -p 7000 
+```
+The arguments -h and -p are used to specify the host and port to connect to. They can be omitted if your server is running on the default host, localhost, port 6379. 
+
+You can do much more with Redis CLI, like sending output to a file, scanning for big keys, get continuous stats, monitor commands, and so on.
+```
+redis-cli --pipe < MAX_INSERT_KEYS.txt 
+
+redis-cli --bigkeys > BIG_KEY_REPORT.txt 
+
+redis-cli MONITOR > COMMANDS.log
+```
+
+
 #### Basic Replication 
 
 #### Replication with Sentinels 
