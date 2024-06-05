@@ -211,105 +211,163 @@ redis> SENTINEL get-master-addr-by-name myprimary
 ```
 
 
-### VI. Initial Tuning
-We love Redis because it’s fast (and fun!), so as we begin to consider scaling out Redis, we first want to make sure we've done everything we can to maximize its performance.
-
-Let's start by looking at some important tuning parameters.
-
-`Max Clients`
-Redis has a default of max of 10,000 clients; after that maximum has been reached, Redis will respond to all new connections with an error. If you have a lot of connections (or a lot of application instances), then you may need to go higher. You can set the max number of simultaneous clients in the Redis config file:
-```
-maxclients 20000
-```
-
-`Max Memory`
-By default, Redis has no max memory limit, so it will use all available system memory. If you are using replication, you will want to limit the memory usage in order to have overhead for replica output buffers. It’s also a good idea to leave memory for the system. Something like 25% overhead. You can update this setting in Redis config file:
-```
-# memory size in bytes  
-maxmemory 1288490188
-```
-
-`Set tcp-backlog`
-The Redis server uses the value of tcp-backlog to specify the size of the complete connection queue.
-
-Redis passes this configuration as the second parameter of the `listen(int s, int backlog)` call.
-
-If you have many connections, you will need to set this higher than the default of 511. You can update this in Redis config file:
-```
-# TCP listen() backlog. 
-# 
-# In high requests-per-second environments you need an high backlog in order 
-# to avoid slow clients connections issues. Note that the Linux kernel 
-# will silently truncate it to the value of /proc/sys/net/core/somaxconn so 
-# make sure to raise both the value of somaxconn and tcp_max_syn_backlog 
-# in order to get the desired effect.
-tcp-backlog 65536
-```
-As the comment in `redis.conf` indicates, the value of `somaxconn` and `tcp_max_syn_backlog` may need to be increased at the OS level as well.
-
-`Set read replica configurations`
-One simple way to scale Redis is to add read replicas and take load off of the primary. This is most effective when you have a read-heavy (as opposed to write-heavy) workload. You will probably want to have the replica available and still serving stale data, even if the replication is not completed. You can update this in the Redis config:
-```
-slave-serve-stale-data yes
-```
-You will also want to prevent any writes from happening on the replicas. You can update this in the Redis config:
-```
-slave-read-only yes
-```
-
-`Kernel memory`
-Under high load, occasional performance dips can occur due to memory allocation. This is something Salvatore, the creator of Redis, blogged about in the past. The performance issue is related to transparent hugepages, which you can disable at the OS level if needed.
-```
-$ echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
-```
-
-`Kernel network stack`
-If you plan on handling a large number of connections in a high performance environment, we recommend tuning the following kernel parameters:
-```
-vm.swappiness=0                       # turn off swapping
-net.ipv4.tcp_sack=1                   # enable selective acknowledgements
-net.ipv4.tcp_timestamps=1             # needed for selective acknowledgements
-net.ipv4.tcp_window_scaling=1         # scale the network window
-net.ipv4.tcp_congestion_control=cubic # better congestion algorithm
-net.ipv4.tcp_syncookies=1             # enable syn cookies
-net.ipv4.tcp_tw_recycle=1             # recycle sockets quickly
-net.ipv4.tcp_max_syn_backlog=NUMBER   # backlog setting
-net.core.somaxconn=NUMBER             # up the number of connections per port
-net.core.rmem_max=NUMBER              # up the receive buffer size
-net.core.wmem_max=NUMBER              # up the buffer size for all connections
-```
-
-`File descriptor limits`
-If you do not set the correct number of file descriptors for the Redis user, you will see errors indicating that “Redis can’t set maximum open files..” You can increase the file descriptor limit at the OS level.
-
-Here's an example on Ubuntu using systemd:
-```
-/etc/systemd/system/redis.service
-[Service] 
-... 
-User=redis 
-Group=redis 
-...
-LimitNOFILE=65536 
-...
-```
-You will then need to reload the daemon and restart the redis service.
-
-`Enabling RPS (Receive Packet Steering) and CPU preferences`
-One way we can improve performance is to prevent Redis from running on the same CPUs as those handling any network traffic. This can be accomplished by enabling RPS for our network interfaces and creating some CPU affinity for our Redis process.
-
-Here is an example. First we can enable RPS on CPUs 0-1:
-```
-$ echo '3' > /sys/class/net/eth1/queues/rx-0/rps_cpus
-```
-Then we can set the CPU affinity for redis to CPUs 2-8:
-```
-# config is set to write pid to /var/run/redis.pid
-$ taskset -pc 2-8 `cat /var/run/redis.pid`
-pid 8946's current affinity list: 0-8
-pid 8946's new affinity list: 2-8
-```
-
+### VI. Clustering In Redis
+r signing up for Redis Cloud, our managed
+service, and let us do the scaling for you.
+Of course, that route is not for everyone.
+And as I said, there's a lot to learn here.
+So let's dive in.
+We'll, start with scalability.
+Here's one definition.
+Scalability is the property of a system
+to handle a growing amount of work
+by adding resources to the system.
+The two most common scaling strategies
+are vertical scaling and horizontal scaling.
+Vertical scaling, or also called scaling up,
+means adding more resources like CPUs or memory to your server.
+Horizontal scaling, or scaling out,
+implies adding more servers to your pool of resources.
+It's the difference between just getting a bigger server
+and deploying a whole fleet of servers.
+Let's take an example.
+Suppose you have a server with 128 gigabytes of RAM,
+but you know that your database will need
+to store 300 gigabytes of data.
+In this case, you'll have two choices.
+You can either add more RAM to your server
+so it can fit the 300 gigabyte data set,
+or you can add two more servers and split
+the 300 gigabytes of data between the three of them.
+Hitting your server's RAM limit is
+one reason you might want to scale up or out.
+But reaching the performance limits in terms of throughput
+or operations per second is another.
+Since Redis is mostly single-threaded,
+a single Redis Server instance cannot make use of the multiple
+cores of your server's CPU for command processing.
+But if we split the data between two Redis instances,
+our system can process requests in parallel,
+effectively doubling the throughput.
+In fact, performance will scale close to linearly
+by adding more Redis instances to the system.
+This pattern of splitting data between multiple servers
+for the purpose of scaling is called sharding.
+The resulting servers or processes
+that hold chunks of the data are called shards.
+This performance increase sounds amazing,
+but it adds some complexity.
+If we divide and distribute our data across two shards, which
+are just two Redis Server instances,
+how will we know where to look for each key?
+We need to have a way to consistently map
+a key to a specific shard.
+There are multiple ways to do this.
+And different databases adapt different strategies.
+The one Redis uses is called algorithmic sharding.
+And this is how it works.
+Define the shard for a given key.
+We hash the key and then mod the result
+by the total number of shards.
+Because we're using a deterministic hash function,
+this function will always assign a given key to the same shards.
+But what happens if we want to increase our shards count even
+further, a process commonly called resharding?
+Let's say we add one new shard so that our total number
+of shards is three.
+Now, when a client tries to read the key foo,
+they will run the hash function and mod the number of shards
+as before.
+This time, the number of shards is different
+and we're modding with three instead of two.
+Understandably, the result may be different,
+pointing us to the wrong shard.
+Resharding is a common issue with the algorithmic sharding
+strategy.
+This can be solved by rehashing all the keys in the keys base
+and moving them to the shard appropriate to the new shard
+count.
+This is not a trivial task, though.
+And it can require a lot of time and resources,
+during which the database will not
+be able to reach its full performance
+or might even become unavailable.
+Redis uses a clever approach to solve this problem--
+a logical unit that sits between a key and a shard
+called a hashslot.
+The total number of hashslots in a database
+is always 16,384, or 16K.
+The hashslots are divided roughly even across the shards.
+So, for example, slots 0 through 8,000
+might be assigned to shard 1, and slots 8,001 to 16,384
+might be assigned to shard 2.
+In a Redis cluster, we actually mod by the number of hashslots,
+not by the number of shards.
+Each key is assigned to a hashslot.
+When we do need to reshard, we simply move hashslots from one
+shard to another, distributing the data
+as required across the different Redis instances.
+Now that we know what sharding is and how
+it works in a Redis cluster, we can move on
+to high availability.
+Redis cluster is what provides sharding and high availability
+in open source Redis.
+High availability refers to the cluster's ability
+to remain operational even in the face of certain failures.
+For example, the cluster can detect
+when a primary shard fails and promote a replica to a primary
+without any manual intervention from the outside.
+But how does it do it?
+How does it that a primary shard has failed?
+And how does it promote its replica to the new primary?
+Say we have one replica for every primary shard.
+If all our data is divided between three Redis Servers,
+we would need a six-membered cluster,
+with three primary shards and three replicas.
+All six shards are connected to each other over TCP
+and constantly ping each other and exchange messages.
+These messages allow the cluster to determine
+which shards are alive.
+When enough shards report that a given primary shard is not
+responding to them, they can agree to trigger a fail-over
+and promote the shard's replica to become the new primary.
+How many shards need to agree that a fellow shard is offline
+before fail-over is triggered? Well that's configurable.
+And you could set it up when you create a cluster.
+But there are some very important guidelines
+that you need to follow.
+To prevent something called a split brain situation
+in a Redis cluster, always keep an odd number of primary shards
+and two replicas per primary shard.
+Let me show you what I mean.
+The group on the left side will not
+be able to talk to the shards in the group on the right side.
+So the cluster will think that they are offline and will
+trigger a fail-over of any primary shards,
+resulting in a left side with all primary shards.
+On the right side, the three shards
+will also see that the shards on the left as offline,
+and will trigger a fail-over on any primary shards that
+were on the left side, resulting in a right side
+of all primary shards.
+Both sides, thinking they have all the primaries,
+will continue to receive client requests that modify data.
+And that is a problem, because maybe client A sets the key foo
+to bar on the left side, but a client B sets the same key's
+value to baz on the right side.
+When the network partition is removed
+and the shards try to rejoin, we will have a conflict,
+because we have two shards holding different data,
+claiming to be the primary, and we wouldn't
+know which data is valid.
+This is called a split brain situation,
+and it's a very common issue in the world of distributed
+systems.
+A popular solution is to always keep an odd number
+of shards in your cluster.
+Again, to prevent this kind of conflict,
+always keep the odd number of primary shards
+and two replicas per primary shard.
 
 ### VII. Persistence Options in Redis
 If a Redis server that only stores data in RAM is restarted, all data is lost. To prevent such data loss, there needs to be some mechanism for persisting the data to disk. Redis provides two of them, snapshotting and an append-only file, or AOF. You can configure your Redis instance
