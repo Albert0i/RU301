@@ -495,7 +495,7 @@ When the file gets too big it can automatically rewrite it in the background, co
 
 
 ### VIII. Summary 
-If you do not make heavy usage on Redis or the running is working fine, your journey should probably end here. Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting. 
+If you do not make heavy usage on Redis or the basic tunning works fine, your journey should probably end here. Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting. 
 
 
 ### IX. Bibliography 
