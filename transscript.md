@@ -363,35 +363,23 @@ Step 5
 As a final step, restart the Redis server process (you can press Ctrl+C in the terminal to stop the process and re-run it again). If you run the SCAN 0 command you will see that all the keys you created are still in the database, even though we restarted the process.
 
 
+HW 2.1 
+When a snapshot is created, the entire point-in-time view of the dataset is written to persistent storage in a compact .rdb file. You can set up recurring backups, for example every 1, 12, or 24 hours and use these backups to easily restore different versions of the data set in case of disasters. You can also use these snapshots to create a clone of the server, or simply leave them in place for a future restart.
+
+HW 2.2
+With the fsync every write policy, the write is acknowledged to the client only after it has been written to the AOF file and flushed to disk. Since in this approach we are writing to disk synchronously, we can expect a much higher latency than usual. In this case no data will be lost and speed is of little concern.
+
+HW 2.3 
+You can configure the name of the .rdb file with the dbfilename configuration directive. With this particular save configuration, Redis will automatically dump the dataset to disk every 60 seconds if at least 10 keys changed in that period.
+
+HW 2.4 
+When the file gets too big it can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved. If, for example, we have a counter key foo that changes state every few minutes, we would have hundreds or thousands of log entries for that key for which we don’t care. We only need to know the latest state of the key and can delete the others.
 
 
 
+1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
+2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
+3 [Node-Redis](https://www.npmjs.com/package/redis)
+4 [ioredis](https://www.npmjs.com/package/ioredis)
+5. [Christabel, BY SAMUEL TAYLOR COLERIDGE](https://www.poetryfoundation.org/poems/43971/christabel)
 
-
-
-
-
-
-[Install Redis on Linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
-
-[redis-windows](https://github.com/zkteco-home/redis-windows)
-
-[Redis7.2.4-Homebrew](https://github.com/Albert0i/Redis7.2.4-Homebrew.git)
-
-
-
-
-redis:7.2.4-nanoserver-20H2
-
-albert0i/redis
-Updated about 1 year ago
-Version 3.2.100 on nanoserver (1909)
-
-docker image tag redis:7.2.4-nanoserver-20H2 albert0i/redis:7.2.4-nanoserver-20H2
-docker image push albert0i/redis:7.2.4-nanoserver-20H2
-
-Version 7.2.4 on nanoserver (20H2)
-
-
-
-docker image pull albert0i/redis:7.2.4-nanoserver-20H2
