@@ -495,6 +495,8 @@ When the file gets too big it can automatically rewrite it in the background, co
 
 
 ### VIII. Summary 
+If you do not make heavy usage on Redis or the running works, your journey should probably end here. Scaling only happens when certain system limits are hits in a single instance system. 
+
 
 
 ### IX. Bibliography 
