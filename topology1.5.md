@@ -494,7 +494,10 @@ AOF contains a log of all the operations that modify the database in a format th
 When the file gets too big it can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved. If, for example, we have a counter key foo that changes state every few minutes, we would have hundreds or thousands of log entries for that key for which we don’t care. We only need to know the latest state of the key and can delete the others.
 
 
-### Bibliography 
+### VIII. Summary 
+
+
+### V. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
 
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
