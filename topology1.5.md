@@ -496,9 +496,13 @@ When the file gets too big it can automatically rewrite it in the background, co
 
 ### Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
+
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
+
 3 [Node-Redis](https://www.npmjs.com/package/redis)
+
 4 [ioredis](https://www.npmjs.com/package/ioredis)
+
 5. [Christabel, BY SAMUEL TAYLOR COLERIDGE](https://www.poetryfoundation.org/poems/43971/christabel)
 
 
