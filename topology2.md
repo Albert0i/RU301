@@ -141,26 +141,74 @@ In the final step, the leader will reconfigure the chosen replica to become a pr
 If you have a system that uses Sentinel for high availability, then you need to have a client that supports Sentinel. Not all libraries have this feature, but most of the popular ones do, so make sure you add it to your list of requirements when choosing your library.
 
 
-### V. Client Performance Improvements
-#### 1. Connection management - Pooling
-As we showed in the previous section, Redis clients are responsible for managing connections to the Redis server. Creating and recreating new connections over and over again, creates a lot of unnecessary load on the server. A good client library will offer some way of optimizing connection management, by setting up a connection pool, for example.
+### V. Replication with Sentinels 
+#### Step 1
+If you still have the primary and replica instances we set up in the previous exercise (3.2) - great! We’ll reuse them to create our Sentinel setup. If not - refer back to the instructions and go through them again.
 
-With connection pooling, the client library will instantiate a series of (persistent) connections to the Redis server and keep them open. When the application needs to send a request, the current thread will get one of these connections from the pool, use it, and return it when done.
+When done, you will have a primary Redis instance with one replica.
 
-![alt connection pool](homebrew-standalone/img/connection_pool.png)
+#### Step 2
+To initialise a Redis Sentinel, you need to provide a configuration file, so let’s go ahead and create one:
+```
+$ touch sentinel1.conf
+```
 
-So if possible, always try to choose a client library that supports pooling connections, because that decision alone can have a huge influence on your system’s performance.
+Open the file and paste in the following settings:
+```
+port 5000
+sentinel monitor myprimary 127.0.0.1 6379 2
+sentinel down-after-milliseconds myprimary 5000
+sentinel failover-timeout myprimary 60000
+sentinel auth-pass myprimary 123456
+```
 
-#### 2. Pipelining
-As in any client-server application, Redis can handle many clients simultaneously.
+Breakdown of terms:
 
-Each client does a (typically blocking) read on a socket and waits for the server response. The server reads the request from the socket, parses it, processes it, and writes the response to the socket. The time the data packets take to travel from the client to the server, and then back again, is called network round trip time, or RTT.
+- port - The port on which the Sentinel should run
+- sentinel monitor - monitor the Primary on a specific IP address and port. Having the address of the Primary the Sentinels will be able to discover all the replicas on their own. The last argument on this line is the number of Sentinels needed for quorum. In our example - the number is 2.
+- sentinel down-after-milliseconds - how many milliseconds should an instance be unreachable so that it’s considered down
+- sentinel failover-timeout - if a Sentinel voted another Sentinel for the failover of a given master, it will wait this many milliseconds to try to failover the same master again.
+- sentinel auth-pass - In order for Sentinels to connect to Redis server instances when they are configured with requirepass, the Sentinel configuration must include the sentinel auth-pass directive.
 
-If, for example, you needed to execute 50 commands, you would have to send a request and wait for the response 50 times, paying the RTT cost every single time. To tackle this problem, Redis can process new requests even if the client hasn't already read the old responses. This way, you can send multiple commands to the server without waiting for the replies at all; the replies are read in the end, in a single step.
+#### Step 3
+Make two more copies of this file - `sentinel2.conf` and `sentinel3.conf` and edit them so that the PORT configuration is set to 5001 and 5002, respectively.
 
-![alt pipelining](homebrew-standalone/img/pipelining.png)
+#### Step 4
+Let’s initialise the three Sentinels in three different terminal tabs:
+```
+# Tab 1
+$ redis-server ./sentinel1.conf --sentinel
 
-This technique is called pipelining and is another good way to improve the performance of your system. Most Redis libraries support this technique out of the box.
+# Tab 2
+$ redis-server ./sentinel2.conf --sentinel
+
+# Tab3
+$ redis-server ./sentinel3.conf --sentinel
+```
+
+#### Step 5
+If you connected to one of the Sentinels now you would be able to run many new commands that would give an error if run on a Redis instance. For example:
+```
+# Provides information about the Primary
+SENTINEL master myprimary
+
+# Gives you information about the replicas connected to the Primary
+SENTINEL replicas myprimary
+
+# Provides information on the other Sentinels
+SENTINEL sentinels myprimary
+
+# Provides the IP address of the current Primary
+SENTINEL get-master-addr-by-name myprimary
+```
+
+#### Step 6
+If we killed the primary Redis instance now by pressing Ctrl+C or by running the `redis-cli -p 6379 DEBUG sleep 30` command, we’ll be able to observe in the Sentinels’ logs that the failover process will start in about 5 seconds. If you run the command that returns the IP address of the Primary again you will see that the replica has been promoted to a Primary:
+```
+redis> SENTINEL get-master-addr-by-name myprimary
+1) "127.0.0.1"
+2) "6380"
+```
 
 
 ### VI. Initial Tuning
