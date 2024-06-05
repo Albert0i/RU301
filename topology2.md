@@ -38,7 +38,7 @@ First let’s create and configure the primary instance. We’ll start with a fe
 $ touch primary.conf  # Create the configuration file
 ```
 
-Now open the primary.conf file with your favourite text editor and set the following configuration directives:
+Now open the `primary.conf` file with your favourite text editor and set the following configuration directives:
 ```
 # Create a strong password here
 requirepass a_strong_password
