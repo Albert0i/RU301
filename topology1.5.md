@@ -102,37 +102,7 @@ If, for example, you needed to execute 50 commands, you would have to send a req
 This technique is called pipelining and is another good way to improve the performance of your system. Most Redis libraries support this technique out of the box.
 
 
-### Sharded cluster 
-
-### Summary 
-
-### Bibliography 
-
-### Epilogue 
-
-### EOF 
-
-
-
-
-
-The Command Line Tool: Redis-CLI
-================================
-Configuring a Redis Server
-==========================
-Redis Clients
-=============
-The Redis.io client page lists over 200 client libraries
-for more than 50 programming languages.
-
-Client Performance Improvements
-===============================
-Connection management - Pooling
-Pipelining
-
-
-Initial Tuning
-==============
+### VI. Initial Tuning
 We love Redis because it’s fast (and fun!), so as we begin to consider scaling out Redis, we first want to make sure we've done everything we can to maximize its performance.
 
 Let's start by looking at some important tuning parameters.
@@ -231,6 +201,36 @@ pid 8946's current affinity list: 0-8
 pid 8946's new affinity list: 2-8
 ```
 
+
+### VII. Introduction to Persistence and Durability
+
+
+### Bibliography 
+
+### Epilogue 
+
+### EOF 
+
+
+
+
+
+The Command Line Tool: Redis-CLI
+================================
+Configuring a Redis Server
+==========================
+Redis Clients
+=============
+The Redis.io client page lists over 200 client libraries
+for more than 50 programming languages.
+
+Client Performance Improvements
+===============================
+Connection management - Pooling
+Pipelining
+
+Initial Tuning
+==============
 HW 1.1 Runninng redis-cli in command line mode allows sending output to a file, scanning for big keys, continuous stats, and monitoring.
 
 HW 1.2 The CONFIG REWRITE command rewrites the redis.conf> file that the server was started with, applying the minimal changes needed to make it reflect the configuration currently used by the server. This may be different from the original file's contents because of the use of the CONFIG SET command.
