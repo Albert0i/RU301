@@ -202,7 +202,10 @@ pid 8946's new affinity list: 2-8
 ```
 
 
-### VII. Introduction to Persistence and Durability
+### VII. Persistence Options in Redis
+As I'm sure you know, Redis serves all data directly from memory. But Redis is also capable of persisting data to disk. Persistence preserves data in the event of a server restart. 
+
+
 
 
 ### Bibliography 
