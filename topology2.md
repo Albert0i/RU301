@@ -1,4 +1,4 @@
-### Tune beore you scale 
+### On Topology
 
 ### Prologue 
 This article is created from transscript of [RU301](https://redis.io/university/courses/ru301/) verbatim, not because of my laziness. But for the great significance and unstirrable value in the aforementioned narrative of the course. Nevertheless links and addenda will be appended whenever it is appropriate. 
