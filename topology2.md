@@ -215,9 +215,9 @@ redis> SENTINEL get-master-addr-by-name myprimary
 Before we jump into the details, let's first address the elephant in the room. *DBAAS* offerings, or Database as a Service in the cloud. No doubt it's useful to know how Redis scales and how you might deploy it. But deploying and maintaining a Redis cluster is a fair amount of work.
 
 So if you don't want to deploy and manage Redis yourself, then consider sir signing up for Redis Cloud, our managed service, and let us do the scaling for you. Of course, that route is not for everyone. And as I said, there's a lot to learn here. So let's dive in. We'll, start with scalability. Here's one definition.
-```
-Scalability is the property of a system to handle a growing amount of work by adding resources to the system.
-```
+
+**Scalability is the property of a system to handle a growing amount of work by adding resources to the system.**
+
 The two most common scaling strategies are *vertical scaling* and *horizontal scaling*. Vertical scaling, or also called scaling up, means adding more resources like CPUs or memory to your server. Horizontal scaling, or scaling out, implies adding more servers to your pool of resources. It's the difference between just getting a bigger server and deploying a whole fleet of servers.
 
 Let's take an example. Suppose you have a server with 128 gigabytes of RAM, but you know that your database will need to store 300 gigabytes of data. In this case, you'll have two choices. You can either add more RAM to your server so it can fit the 300 gigabyte data set, or you can add two more servers and split the 300 gigabytes of data between the three of them.
