@@ -9,21 +9,27 @@ import { Redis } from "ioredis"
     { port: 7005, host: "127.0.0.1" }
   ]);
 
-  for (let i=1; i<=120; i++) {
+  // Always start with 0
+  await cluster.set("counter", 0);
+
+  // Repeat for 1 hour
+  for (let i=1; i<=3600; i++) {
     try {
-      console.log(await cluster.incr("counter"));
+      // Update the value 
+      await cluster.incr("counter");
+
+      // Wait five seconds for at least one replica acknowledges
+      console.log(`${await cluster.wait(1, 5000)} replica(s) has acknowledged`)
+      
+      // Read it back and display
+      console.log(`counter=${await cluster.get('counter')}`)
     } 
-    catch (e) {
-      console.log('.');
-    }
-    
-    
-    // imitate delay 
+    catch (e) { console.log('.'); }
+    // Delay for 1 second
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
   await cluster.disconnect()
-
 
   /*
      ioredis
