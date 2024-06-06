@@ -50,7 +50,7 @@ To put things on the right track, you should always consult `redis.conf`...
 ### II. Replication with Sentinels 
 
 
-### III. Redis Cluster
+### III. Clustering In Redis
 conf/redis.conf
 ```
 # redis.conf file
@@ -315,7 +315,7 @@ services:
 ![alt redis insight](cluster-docker/img/redis_insight.png)
 
 
-### V. Summary 
+### IV. Summary 
 And this concludes my Redis collection: 
 
 1. [Redis Stack aggregation pipeline, 2024/03/20](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/README.md)
@@ -332,7 +332,7 @@ And this concludes my Redis collection:
 Unless... unless somwthing fanciful emerges in my brain... 
 
 
-### VI. Bibliography 
+### V. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
 3. [Redis replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/)
