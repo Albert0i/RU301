@@ -5,7 +5,7 @@ This article is created from transscript of [RU301](https://redis.io/university/
 
 
 ### I. Introduction 
-To put things on the right track, you should always read `redis.conf`... 
+To put things on the right track, you should always consult `redis.conf`... 
 ```
 ########################## CLUSTER DOCKER/NAT support  ########################
 
