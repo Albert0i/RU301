@@ -375,6 +375,8 @@ cd 7001
 ```
 ... and so on.
 
+![alt cluster mode](homebrew-standalone/img/cluster.JPG)
+
 #### Step 5
 Now that you have six empty Redis servers running, you can join them in a cluster:
 ```
