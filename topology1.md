@@ -39,6 +39,8 @@ sudo apt-get install redis
 #### 2. Windows  
 Using Redis in Windows is awkwardly embarrassing for there is no official Redis built. However an unofficial [redis-windows](https://github.com/zkteco-home/redis-windows) is available. It can be installed as a service and with [RedisJson](https://redis.io/json/) support. 
 
+![alt Redis](homebrew-standalone/img/standalone.JPG)
+
 The command to run Redis in both platform is: 
 ```
 redis-server /path/to/redis.conf 
