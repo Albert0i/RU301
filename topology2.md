@@ -429,7 +429,7 @@ import { Redis } from "ioredis"
 
   await cluster.disconnect()
 ```
-Obviously up to three nodes can fail at the same time in this setting. 
+Obviously each shard can fail up to one node in this setting. 
 
 
 #### Step 6
