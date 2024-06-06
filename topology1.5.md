@@ -1,4 +1,4 @@
-### Tune beore you scale 
+### Tune before you scale 
 
 ### Prologue 
 This article is created from transscript of [RU301](https://redis.io/university/courses/ru301/) verbatim, not because of my laziness. But for the great significance and unstirrable value in the aforementioned narrative of the course. Nevertheless addenda and links will be appended whenever it is appropriate. 

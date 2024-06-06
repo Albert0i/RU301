@@ -19,11 +19,11 @@ And this concludes my Redis collection:
 5. [Fun With Cache, 2024/05/17](https://github.com/Albert0i/RU204/blob/main/cache.md)
 6. [Far side of the Moon, 2024/05/17](https://github.com/Albert0i/RU204/blob/main/moon.md)
 7. [The Road So Far, 2024/06/04](https://github.com/Albert0i/RU301/blob/main/topology1.md)
-8. [Tune beore you scale, 2024/06/05](https://github.com/Albert0i/RU301/blob/main/topology1.5.md)
-9. [On Topology, 2024/06/xx](https://github.com/Albert0i/RU301/blob/main/topology2.md)
+8. [Tune before you scale, 2024/06/05](https://github.com/Albert0i/RU301/blob/main/topology1.5.md)
+9. [On Topology, 2024/06/07](https://github.com/Albert0i/RU301/blob/main/topology2.md)
 10. [On Topology (cont), 2024/06/xx](https://github.com/Albert0i/RU301/blob/main/topology3.md)
 
-Unless... unless somwthing terriabe happens and fanciful things emerges in my brain... 
+Unless... unless somwthing fanciful emerges in my brain... 
 
 
 ### VI. Bibliography 
