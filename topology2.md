@@ -483,7 +483,7 @@ As I have said: "Scaling only happens when certain system limits, ie. CPU, RAM, 
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
 3. [Redis replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/)
 4. [Sentinel client spec](https://redis.io/docs/latest/develop/reference/sentinel-clients/)
-5. [Scale with Redis Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/
+5. [Scale with Redis Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/)
 6. [Redis Cluster Specification](https://redis-doc-test.readthedocs.io/en/latest/topics/cluster-spec/#overview-of-redis-cluster-main-components)
 7. [Hash Slot Resharding and Rebalancing for Redis Cluster](https://severalnines.com/blog/hash-slot-resharding-and-rebalancing-redis-cluster/)
 8. [Node-Redis](https://www.npmjs.com/package/redis)
