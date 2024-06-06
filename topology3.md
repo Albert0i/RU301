@@ -5,49 +5,25 @@ To put things on the right track, you should always start on Linux...
 
 ### I. Introduction 
 
-### II. Standalone 
-redis.conf 
-```
-# Accept connections on the specified port, default is 6379
-port 6379
+### II. Replication with Sentinels 
 
-# all available interfaces
-bind * -::*                     
-
-# max number of simultaneous clients
-maxclients 10000
-
-# memory size in bytes  
-maxmemory 1288490188
-
-# save 3600 1 300 100 60 10000
-
-appendonly yes
-appendfilename "appendonly.aof"
-
-# appendfsync always
-appendfsync everysec
-# appendfsync no
-```
-[1.5 Initial Tuning](https://redis.io/university/courses/ru301/)
-[2.1 Persistence Options in Redis](https://youtu.be/08V8KeXhZY4)
-
-[3.1 Basic Replication](https://youtu.be/-osCdf90tRA)
-[3.3 Understanding Sentinels](https://redis.io/university/courses/ru301/)
-
-[4.0 Clustering in Redis](https://youtu.be/jJMJc9QZaoA)
-
-[5.1 Data Points in Redis](https://redis.io/university/courses/ru301/)
-[5.3 Identifying Issues](https://redis.io/university/courses/ru301/)
-
-### III. HA with Sentinels 
-
-### IV. HA with charded cluster 
+### III. Redis Cluster
 
 ### V. Summary 
 And this concludes my Redis collection: 
 
-Unless... unless somwthing fancy emerges in my brain... 
+1. [Redis Stack aggregation pipeline, 2024/03/20](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/README.md)
+2. [Thinking in Redis, 2024/04/01](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/docdb.md)
+3. [Data 101, 2024/04/19](https://github.com/Albert0i/RU204/blob/main/Data101.md)
+4. [OM vs ORM, 2024/04/30](https://github.com/Albert0i/RU204/blob/main/om-orm.md)
+5. [Fun With Cache, 2024/05/17](https://github.com/Albert0i/RU204/blob/main/cache.md)
+6. [Far side of the Moon, 2024/05/17](https://github.com/Albert0i/RU204/blob/main/moon.md)
+7. [The Road So Far, 2024/06/04](https://github.com/Albert0i/RU301/blob/main/topology1.md)
+8. [Tune beore you scale, 2024/06/05](https://github.com/Albert0i/RU301/blob/main/topology1.5.md)
+9. [On Topology, 2024/06/xx](https://github.com/Albert0i/RU301/blob/main/topology2.md)
+10. [On Topology (cont), 2024/06/xx](https://github.com/Albert0i/RU301/blob/main/topology3.md)
+
+Unless... unless somwthing terriabe happens and fanciful things emerges in my brain... 
 
 
 ### VI. Bibliography 
