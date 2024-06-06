@@ -141,6 +141,11 @@ In the final step, the leader will reconfigure the chosen replica to become a pr
 If you have a system that uses Sentinel for high availability, then you need to have a client that supports Sentinel. Not all libraries have this feature, but most of the popular ones do, so make sure you add it to your list of requirements when choosing your library.
 
 
+**Addendum**
+
+The group of Sentinels monitors a primary Redis instance and its replicas. If the sentinels detect that the primary instance has failed, the sentinel processes will look for the replica that has the *latest* data and will promote that replica to be the new primary. This way, the clients talking to the database will be able to reconnect to the new primary and continue functioning as usual, with minimal disruption to the users.
+
+
 ### V. Replication with Sentinels 
 #### Step 1
 If you still have the primary and replica instances we set up in the previous section - great! We’ll reuse them to create our Sentinel setup. If not - refer back to the instructions and go through them again.
@@ -464,6 +469,7 @@ If you do not make heavy usage on Redis or the basic tunning works fine, your jo
 ### XI. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
+3. [Redis replication]()
 3. [Node-Redis](https://www.npmjs.com/package/redis)
 4. [ioredis](https://www.npmjs.com/package/ioredis)
 5. [Christabel, BY SAMUEL TAYLOR COLERIDGE](https://www.poetryfoundation.org/poems/43971/christabel)
