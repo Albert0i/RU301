@@ -175,6 +175,8 @@ Breakdown of terms:
 - sentinel failover-timeout - if a Sentinel voted another Sentinel for the failover of a given master, it will wait this many milliseconds to try to failover the same master again.
 - sentinel auth-pass - In order for Sentinels to connect to Redis server instances when they are configured with requirepass, the Sentinel configuration must include the sentinel auth-pass directive.
 
+![alt sentinel1](homebrew-standalone/img/sentinel.JPG)
+
 #### Step 3
 Make two more copies of this file - `sentinel2.conf` and `sentinel3.conf` and edit them so that the PORT configuration is set to 5001 and 5002, respectively.
 
@@ -214,6 +216,69 @@ redis> SENTINEL get-master-addr-by-name myprimary
 1) "127.0.0.1"
 2) "6380"
 ```
+
+**Addendum**
+
+sentinels.js
+```
+import { Redis } from "ioredis"
+
+const redis = new Redis({
+    sentinels: [
+      { host: "127.0.0.1", port:  5000 },
+      { host: "127.0.0.1", port:  5001 },
+      { host: "127.0.0.1", port:  5002 }      
+    ],
+    name: "myprimary", 
+    password: "123456",
+    preferredSlaves: [
+      { host: "127.0.0.1", port:  6380 }, 
+      { host: "127.0.0.1", port:  6381 }
+    ]
+  });
+
+  // Always start with 0
+  await redis.set("counter", 0);
+
+  // Repeat for 1 hour
+  for (let i=1; i<=3600; i++) {
+    try {
+      // Update the value 
+      await redis.incr("counter");
+
+      // Wait five seconds for at least one replica acknowledges
+      console.log(`${await redis.wait(1, 5000)} replica(s) has acknowledged`)
+      
+      // Read it back and display
+      console.log(`counter=${await redis.get('counter')}`)
+    } 
+    catch (e) {  console.log('.'); }
+    // Delay for 1 second
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  await redis.disconnect()
+```
+
+**Scenario 1:**
+
+- Primary failed, replica 2 switchs to primary, client continues to function after five seconds; 
+
+![alt primary failed](homebrew-ha-with-sentinels/img/primary_fail_1.JPG)
+
+- Primary failed again; replica 1 switch to primary but client can't get acknowledge any more. 
+
+![alt switch over](homebrew-ha-with-sentinels/img/switch_over.JPG)
+
+**Scenario 2:**
+
+- Sentinel 1 failed, primary failed, replica 1 switch to primary, client continues to function after five seconds; 
+
+- Sentinel 2 failed, primary failed, replica 2 can't switch to primary, client ceases to function. 
+
+**Corollary:**
+
+In this setting, at most two data nodes and one sentinel node can fail at the same time. 
 
 
 ### VI. Clustering In Redis 
@@ -326,6 +391,9 @@ Finally, you should see a message saying:
 ```
 
 This means that there is at least a master instance serving each of the 16384 slots available.
+
+**Addendum**
+
 
 #### Step 6
 Let’s add a new shard to the cluster, which is something you might do when you need to scale.
