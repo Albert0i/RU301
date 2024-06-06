@@ -12,6 +12,268 @@ To put things on the right track, you should always start on Linux...
 
 
 ### III. Redis Cluster
+conf/redis.conf
+```
+# redis.conf file
+
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+
+# Note that you must specify a directory here, not a file name.
+dir /data
+
+# Enable AOF file persistence
+appendonly yes
+
+# You can set these explicitly by uncommenting the following line.
+save 3600 1 300 100 60 10000
+
+# appendfsync always
+appendfsync everysec
+
+# 
+protected-mode no
+stop-writes-on-bgsave-error yes
+```
+
+.env 
+```
+# image name
+IMAGE_NAME=redis/redis-stack-server
+
+# image version
+IMAGE_VERSION=6.2.6-v12
+```
+
+Makefile
+```
+#
+# Import and expose environment variables
+#
+cnf ?= .env
+include $(cnf)
+export $(shell sed 's/=.*//' $(cnf))
+
+#
+# Main
+#
+.PHONY: help build up down ps logs 
+
+help:
+	@echo
+	@echo "Usage: make TARGET"
+	@echo
+	@echo "Redis Cluster Dockerize project automation helper for Linux version 1.0"
+	@echo
+	@echo "Targets:"
+	@echo "	up  		start the cluster"
+	@echo "	down 		stop the cluster"
+	@echo "	ps 		show running containers"
+	@echo "	logs		cluster logs"
+	@echo 
+	@echo "	create		create the cluster"
+	@echo "	creator		docker-compose exec creator bash"
+	@echo "	cli 		docker-compose exec re1 redis-cli -c"
+	@echo "	info		docker-compose exec re1 redis-cli cluster info"
+	@echo "	nodes		docker-compose exec re1 redis-cli cluster nodes"
+	@echo "	slots		docker-compose exec re1 redis-cli cluster slots"
+	@echo "	config		edit configuration"
+
+up:
+	docker-compose up -d --remove-orphans
+	@echo "Next, point your browser to http://localhost:5540"
+
+down:
+	docker-compose down -v
+
+ps:
+	docker-compose ps
+
+logs:
+	docker-compose logs 
+
+create: 
+	docker-compose exec creator redis-cli --cluster create 192.168.1.11:6379 192.168.1.12:6379 \
+	192.168.1.13:6379 192.168.1.14:6379 192.168.1.15:6379 192.168.1.16:6379 \
+	--cluster-replicas 1
+
+creator:
+	docker-compose exec creator bash
+
+cli:
+	docker-compose exec re1 redis-cli -c 
+
+bash:
+	docker-compose exec re1 bash
+
+info:	
+	docker-compose exec re1 redis-cli cluster info
+	
+nodes:	
+	docker-compose exec re1 redis-cli cluster nodes
+
+slots:	
+	docker-compose exec re1 redis-cli cluster slots
+
+config:
+	nano .env
+```
+
+docker-compose.yml
+```
+version: "3"
+
+networks:
+  re_cluster:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+
+services:
+  #Node 1
+  re1:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7000:6379
+    container_name: re1
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7000:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.11
+
+  #Node 2
+  re2:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7001:6379
+    container_name: re2
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7001:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.12
+
+  #Node 3
+  re3:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7002:6379
+    container_name: re3
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7002:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.13
+
+#Node 4
+  re4:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7003:6379
+    container_name: re4
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7003:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.14
+
+#Node 5
+  re5:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7004:6379
+    container_name: re5
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7004:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.15
+
+#Node 6
+  re6:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 7005:6379
+    container_name: re6
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+      - ./7005:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.16
+
+#Creator
+  creator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    container_name: creator
+    restart: unless-stopped    
+    volumes:
+      - ./conf:/usr/local/etc/redis:ro
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.199
+    depends_on:
+      - re1
+      - re2
+      - re3
+      - re4
+      - re5
+      - re6
+
+# Redis Insight
+  redisinsight:
+    image: redis/redisinsight:2.50
+    container_name: redisinsight
+    ports:
+      - 5540:5540
+    restart: unless-stopped    
+    volumes:
+      - ./5540:/data:rw
+    networks:
+      re_cluster:
+        ipv4_address: 192.168.1.198
+    depends_on:
+      - re1
+      - re2
+      - re3
+      - re4
+      - re5
+      - re6
+```
+
+![alt make](cluster-docker/img/make.png)
+
+![alt make up ps](cluster-docker/img/make_up_ps.png)
+
+![alt make info](cluster-docker/img/make_info.png)
+
+![alt make nodes slots](cluster-docker/img/make_nodes_slots.png)
+
+![alt make cli](cluster-docker/img/redis_cli.png)
+
+![alt redis insight](cluster-docker/img/redis_insight.png)
 
 
 ### V. Summary 
