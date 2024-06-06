@@ -500,6 +500,8 @@ AOF, in a way, resembles [Redo Log](https://dev.mysql.com/doc/refman/8.4/en/inno
 
 > The redo log is a disk-based data structure used during crash recovery to correct data written by incomplete transactions. During normal operations, the redo log encodes requests to change table data that result from SQL statements or low-level API calls. Modifications that did not finish updating data files before an unexpected shutdown are replayed automatically during initialization and before connections are accepted. 
 
+> The redo log is physically represented on disk by redo log files. Data that is written to redo log files is encoded in terms of records affected, and this data is collectively referred to as redo. The passage of data through redo log files is represented by an ever-increasing [LSN](https://dev.mysql.com/doc/refman/8.4/en/glossary.html#glos_lsn) value. Redo log data is appended as data modifications occur, and the oldest data is truncated as the checkpoint progresses.
+
 
 ### VIII. Summary 
 If you do not make heavy usage on Redis or the basic tunning works fine, your journey should probably end here. Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting. 
