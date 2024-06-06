@@ -253,6 +253,10 @@ Sharding, in a way, resembles [Partitioning](https://dev.mysql.com/doc/refman/8.
 
 > Partitioning takes this notion a step further, by enabling you to distribute portions of individual tables across a file system according to rules which you can set largely as needed. In effect, different portions of a table are stored as separate tables in different locations. The user-selected rule by which the division of data is accomplished is known as a partitioning function, which in MySQL can be the modulus, simple matching against a set of ranges or value lists, an internal hashing function, or a linear hashing function. The function is selected according to the partitioning type specified by the user, and takes as its parameter the value of a user-supplied expression. This expression can be a column value, a function acting on one or more column values, or a set of one or more column values, depending on the type of partitioning that is used.
 
+> This is known as horizontal partitioning—that is, different rows of a table may be assigned to different physical partitions. MySQL 8.0 does not support vertical partitioning, in which different columns of a table are assigned to different physical partitions. There are no plans at this time to introduce vertical partitioning into MySQL.
+
+> In MySQL 8.0, the only storage engines that support partitioning are InnoDB and NDB. Partitioning cannot be used with storage engines that do not support it; these include the MyISAM, MERGE, CSV, and FEDERATED storage engines.
+
 
 ### VII. Creating a Redis Cluster
 #### Step 1
