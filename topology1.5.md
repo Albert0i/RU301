@@ -495,6 +495,7 @@ AOF contains a log of all the operations that modify the database in a format th
 When the file gets too big it can automatically rewrite it in the background, compacting it in a way that only the latest state of the data is preserved. If, for example, we have a counter key foo that changes state every few minutes, we would have hundreds or thousands of log entries for that key for which we don’t care. We only need to know the latest state of the key and can delete the others.
 
 **Addendum**
+
 AOF, in a way, resembles [Redo Log](https://dev.mysql.com/doc/refman/8.4/en/innodb-redo-log.html) in Relational Database. 
 
 > The redo log is a disk-based data structure used during crash recovery to correct data written by incomplete transactions. During normal operations, the redo log encodes requests to change table data that result from SQL statements or low-level API calls. Modifications that did not finish updating data files before an unexpected shutdown are replayed automatically during initialization and before connections are accepted. 
