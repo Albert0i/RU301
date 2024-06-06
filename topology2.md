@@ -475,7 +475,7 @@ Another detail to check is if the client stores the hash slot map locally. If it
 
 
 ### X. Summary 
-If you do not make heavy usage on Redis or the basic tunning works fine, your journey should probably end here. Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting. 
+As I have said: "Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting". If your system makes heavy usage on read, but relatively few on write, consider adding one or more replicas. If your system makes heavy usage on both read and write, clustering is the obviously choice. As topology evolves, more resource has to be dedicated in day-to-day life. 
 
 
 ### XI. Bibliography 
