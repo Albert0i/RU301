@@ -723,6 +723,15 @@ replica-announce-ip 5.5.5.5
 replica-announce-port 1234
 ```
 
+[Redis Cluster and Docker](https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/)
+
+Currently, Redis Cluster does not support NATted environments and in general environments where IP addresses or TCP ports are remapped.
+
+Docker uses a technique called *port mapping*: programs running inside Docker containers may be exposed with a different port compared to the one the program believes to be using. This is useful for running multiple containers using the same ports, at the same time, in the same server.
+
+To make Docker compatible with Redis Cluster, you need to use Docker's *host networking mode*. Please see the --net=host option in the [Docker documentation](https://docs.docker.com/engine/userguide/networking/dockernetworks/) for more information.
+
+
 
 ### VI. Replication with Sentinels 
 
