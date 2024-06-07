@@ -518,5 +518,7 @@ If you do not make heavy usage on Redis or the basic tunning works fine, your jo
 ### Epilogue 
 Time and money are two major factors which drive people forward. Oftentimes one either loses time or money and vice versa. On a sunny day, when a field trip is ruined by a broken car right in the way, what will you lose? It's your temper... 
 
+It's you who controls it? or it controls you?
+
 
 ### EOF (2024/06/05)
