@@ -390,6 +390,17 @@ One example of this is the Redis Data Source for Grafana. It is a Grafana plug-i
 
 
 ### III. Getting Redis Statistics
+#### Starting Environment
+```
+$ docker-compose up -d
+```
+
+#### Connect to the Environment
+In a terminal run this command to get a shell prompt inside the running docker container:
+```
+$ docker-compose exec redis_stats bash
+```
+
 #### Generate load
 A simple way to to generate some load is to open another terminal and run:
 ```
