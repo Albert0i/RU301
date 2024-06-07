@@ -396,6 +396,8 @@ This means that there is at least a master instance serving each of the 16384 sl
 
 **Addendum**
 
+![alt cluster check](homebrew-ha-with-sharding/img/cluster_check.JPG)
+
 sharding.js 
 ```
 import { Redis } from "ioredis"
