@@ -715,7 +715,7 @@ When Docker, or other types of containers using port forwarding, or Network Addr
 
 The problem is that the [ROLE](https://redis.io/commands/role) command, and the replication section of the [INFO](https://redis.io/commands/info) output, when issued into a master instance, will show replicas as having the IP address they use to connect to the master, which, in environments using NAT may be different compared to the logical address of the replica instance (the one that clients should use to connect to replicas).
 
-Similarly the replicas will be listed with the listening port configured into redis.conf, that may be different from the forwarded port in case the port is remapped.
+Similarly the replicas will be listed with the listening port configured into `redis.conf`, that may be different from the forwarded port in case the port is remapped.
 
 To fix both issues, it is possible, since Redis 3.2.2, to force a replica to announce an arbitrary pair of IP and port to the master. The two configurations directives to use are:
 ```
