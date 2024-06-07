@@ -217,6 +217,9 @@ SENTINEL sentinels myprimary
 SENTINEL get-master-addr-by-name myprimary
 ```
 
+![alt info sentinel](homebrew-ha-with-sentinels/img/info_sentinel.JPG)
+
+
 #### Step 6
 If we killed the primary Redis instance now by pressing Ctrl+C or by running the `redis-cli -p 6379 DEBUG sleep 30` command, we’ll be able to observe in the Sentinels’ logs that the failover process will start in about 5 seconds. If you run the command that returns the IP address of the Primary again you will see that the replica has been promoted to a Primary:
 ```
