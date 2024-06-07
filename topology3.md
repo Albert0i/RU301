@@ -1032,7 +1032,7 @@ Unless... unless somwthing fanciful emerges in my brain...
 
 
 ### Epilogue 
-It's you who controls it? or it controls you? 
+> Topology (from the Greek words τόπος, 'place, location', and λόγος, 'study') is the part of mathematics concerned with the properties of a geometric object that are preserved under continuous deformations, such as stretching, twisting, crumpling, and bending; that is, without closing holes, opening holes, tearing, gluing, or passing through itself.
 
 
 ### EOF (2024/06/14)

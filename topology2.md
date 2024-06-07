@@ -600,6 +600,8 @@ Another detail to check is if the client stores the hash slot map locally. If it
 ### X. Summary 
 As I have said: "Scaling only happens when certain system limits, ie. CPU, RAM, network bandwidth are reached in a single instance setting". If your system makes heavy usage on read, but relatively few on write, consider adding one or more replicas. If your system makes heavy usage on both read and write, clustering is the obvious choice. As topology evolves, more resource has to be dedicated in day-to-day operation. 
 
+Always starts on single instance. When performance demands, try to add one or more replicas. Replication, per se, is an elastic solution as it can be scaled up or down with ease at any time any place. Clustering, on the hand, should be considered carefully and planned in the very beginning of project. It can be scaled up or down but *resharding* is not a trivial issue. 
+
 
 ### XI. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
@@ -616,6 +618,8 @@ As I have said: "Scaling only happens when certain system limits, ie. CPU, RAM, 
 
 ### Epilogue 
 Time and money are two major factors which drive people forward. Oftentimes one either loses time or money and vice versa. On a sunny day, when a field trip is ruined by a broken car right in the way, what will you lose? It's your temper... 
+
+It's you who controls it? or it controls you?
 
 
 ### EOF (2024/06/07)
