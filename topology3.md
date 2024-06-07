@@ -710,6 +710,7 @@ To put things on the right track, you should always consult `redis.conf`.
 and official documentation. 
 
 [Configuring replication in Docker and NAT](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/)
+
 When Docker, or other types of containers using port forwarding, or Network Address Translation is used, Redis replication needs some extra care, especially when using Redis Sentinel or other systems where the master [INFO](https://redis.io/commands/info) or [ROLE](https://redis.io/commands/role) commands output is scanned to discover replicas' addresses.
 
 The problem is that the [ROLE](https://redis.io/commands/role) command, and the replication section of the [INFO](https://redis.io/commands/info) output, when issued into a master instance, will show replicas as having the IP address they use to connect to the master, which, in environments using NAT may be different compared to the logical address of the replica instance (the one that clients should use to connect to replicas).
