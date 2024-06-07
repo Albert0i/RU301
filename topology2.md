@@ -28,6 +28,8 @@ To avoid this, the client can use the [WAIT](https://redis.io/docs/latest/comman
 
 Replicas are *read only*. This means that you can configure your clients to read from them, but you cannot write data to them. If you need additional read throughput, you can configure your Redis client to read from replicas as well as from your primary node. However, it's often easier just to scale out your cluster. This lets you scale reads and writes without writing any complex client logic. 
 
+![alt master info replication](homebrew-ha-with-sentinels/img/master_info_replication.JPG)
+
 ![alt info replication](homebrew-ha-with-sentinels/img/info_replication.JPG)
 
 Also, you should know about active active, an advanced feature of Redis Enterprise and Redis Cloud. Active active replicates entire databases across geographically distributed clusters. With active active, you can write locally to any replica databases, and those writes will be reflected globally. Something to keep in mind when you're scaling out.
