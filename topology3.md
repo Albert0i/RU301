@@ -987,7 +987,7 @@ And this concludes my Redis collection:
 7. [The Road So Far, 2024/06/04](https://github.com/Albert0i/RU301/blob/main/topology1.md)
 8. [Tune before you scale, 2024/06/05](https://github.com/Albert0i/RU301/blob/main/topology1.5.md)
 9. [On Topology, 2024/06/07](https://github.com/Albert0i/RU301/blob/main/topology2.md)
-10. [On Topology (cont), 2024/06/xx](https://github.com/Albert0i/RU301/blob/main/topology3.md)
+10. [On Topology (cont), 2024/06/14](https://github.com/Albert0i/RU301/blob/main/topology3.md)
 
 Unless... unless somwthing fanciful emerges in my brain... 
 
@@ -1009,4 +1009,4 @@ Unless... unless somwthing fanciful emerges in my brain...
 It's you who controls it? or it controls you? 
 
 
-### EOF (2024/06/xx)
+### EOF (2024/06/14)
