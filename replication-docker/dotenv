@@ -1,0 +1,13 @@
+
+# image name
+IMAGE_NAME=redis/redis-stack-server
+
+# image version
+IMAGE_VERSION=6.2.6-v12
+
+# A strong password
+STRONG_PASSWORD=123456
+
+#
+# EOF (2024/06/08)
+#
