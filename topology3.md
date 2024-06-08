@@ -664,7 +664,7 @@ $ less /var/log/syslog | grep redis
 Finally, you’ll need to send your logs to your remote logging server to ensure your logs will be backed up to this server. To do this, you’ll also have to modify the rsyslog configuration. This configuration varies depending on your remote logging server provider.
 
 
-### V. Docker environment
+### V. Dockerization 
 To put things on the right track, you should always consult `redis.conf`.
 ```
 ########################## CLUSTER DOCKER/NAT support  ########################
@@ -732,12 +732,390 @@ Docker uses a technique called *port mapping*: programs running inside Docker co
 To make Docker compatible with Redis Cluster, you need to use Docker's *host networking mode*. Please see the --net=host option in the [Docker documentation](https://docs.docker.com/engine/userguide/networking/dockernetworks/) for more information.
 
 
+### VI. Single instance 
+Argument: 
+Always starts on single instance. When performance demands, try to add one or more replicas. 
 
-### VI. Replication with Sentinels 
+```
+mkdir redisdata
+```
+
+#### conf/redis.conf
+```
+# redis.conf file
+
+# Note that you must specify a directory here, not a file name.
+dir /data
+
+# Enable AOF file persistence
+appendonly yes
+
+# You can set these explicitly by uncommenting the following line.
+save 3600 1 300 100 60 10000
+
+# appendfsync always
+appendfsync everysec
+
+# 
+protected-mode no
+
+# 
+stop-writes-on-bgsave-error yes
+```
+
+#### docker-compose.yml 
+```
+version: "3"
+services:
+# Redis 
+  redis:
+    container_name: redis_ru203
+    image: redis/redis-stack-server:6.2.6-v12
+    ports:
+      - 6379:6379
+    restart: unless-stopped    
+    volumes:
+          - ./conf:/usr/local/etc/redis:ro
+          - ./redisdata:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+# Redis Insight
+  redisinsight:
+    image: redis/redisinsight:2.50
+    container_name: redisinsight
+    ports:
+      - 5540:5540
+    restart: unless-stopped    
+    volumes:
+      - ./redisdata:/data:rw
+    depends_on:
+      - redis 
+```
 
 
-### VII. Clustering In Redis
-conf/redis.conf
+### VII. Replication with Sentinels 
+Argument: 
+Replication is the natural evolution in single instance setting when performance demands. It is elastic and can be scaled up or down with ease at any time any place.
+
+```
+mkdir 5000 5001 5002 5540 6379 6380 6381
+cp ./conf/sentinel/redis.conf ./5000
+cp ./conf/sentinel/redis.conf ./5001
+cp ./conf/sentinel/redis.conf ./5002
+```
+
+#### conf/primary/redis.conf
+```
+# Primary
+
+# Create a strong password here
+requirepass "123456"
+
+# AUTH password of the primary instance in case this instance becomes a replica
+masterauth "123456"
+
+# Note that you must specify a directory here, not a file name.
+dir "./data"
+
+# The filename where to dump the DB
+dbfilename "primary.rdb"
+
+# Enable AOF file persistence
+appendonly yes
+
+# Choose a name for the AOF file
+appendfilename "primary.aof"
+
+#
+# save 3600 1 300 100 60 10000
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+
+# 
+protected-mode no
+
+# 
+stop-writes-on-bgsave-error yes
+```
+
+#### conf/replica/redis.conf
+```
+# Replica 
+
+# Address of the primary instance
+# replicaof 127.0.0.1 6379
+replicaof 192.168.1.11 6379
+
+# AUTH password of the primary instance
+masterauth "123456"
+
+# AUTH password for the replica instance
+requirepass "123456"
+
+# Note that you must specify a directory here, not a file name.
+dir "./data"
+
+# The filename where to dump the DB
+dbfilename "replica.rdb"
+
+# Enable AOF file persistence
+appendonly yes
+
+# Choose a name for the AOF file
+appendfilename "replica.aof"
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+
+# 
+protected-mode no
+
+# 
+stop-writes-on-bgsave-error yes
+```
+
+#### conf/sentinel/redis.conf
+```
+# Sentinel
+
+# The port on which the Sentinel should run
+port 6379
+
+# monitor the Primary on a specific IP address and port. Having the address of the Primary the Sentinels will be able to discover all the replicas on their own. The last argument on this line is the number of Sentinels needed for quorum. In our example - the number is 2.
+sentinel monitor myprimary 192.168.1.11 6379 2
+
+# how many milliseconds should an instance be unreachable so that it’s considered down
+sentinel down-after-milliseconds myprimary 5000
+
+# if a Sentinel voted another Sentinel for the failover of a given master, it will wait this many milliseconds to try to failover the same master again.
+sentinel failover-timeout myprimary 60000
+
+# In order for Sentinels to connect to Redis server instances when they are configured with requirepass, the Sentinel configuration must include the sentinel auth-pass directive.
+sentinel auth-pass myprimary 123456
+```
+
+#### .env 
+```
+
+# image name
+IMAGE_NAME=redis/redis-stack-server
+
+# image version
+IMAGE_VERSION=6.2.6-v12
+
+# A strong password
+STRONG_PASSWORD=123456
+```
+
+#### Makefile
+```
+#
+# Import and expose environment variables
+#
+cnf ?= .env
+include $(cnf)
+export $(shell sed 's/=.*//' $(cnf))
+
+#
+# Main
+#
+.PHONY: help build up down ps logs 
+
+help:
+	@echo
+	@echo "Usage: make TARGET"
+	@echo
+	@echo "Redis Replication Dockerize project automation helper for Linux version 1.0"
+	@echo
+	@echo "Targets:"
+	@echo "	up  		start the replication"
+	@echo "	down 		stop the replication"
+	@echo "	ps 		show running containers"
+	@echo "	logs		replication logs"
+	@echo 
+	@echo "	cli 		docker-compose exec primary redis-cli"
+	@echo "	sentinel	docker-compose exec sentinel1 redis-cli"
+	@echo "	info		docker-compose exec primary redis-cli info replication"
+	@echo "	infos		docker-compose exec sentinel1 redis-cli SENTINEL get-master-addr-by-name"
+	@echo "	config		edit configuration"
+
+up:
+	docker-compose up -d --remove-orphans
+	@echo "Next, point your browser to http://localhost:5540"
+
+down:
+	docker-compose down -v
+
+ps:
+	docker-compose ps
+
+logs:
+	docker-compose logs 
+
+cli:
+	docker-compose exec primary redis-cli --pass ${STRONG_PASSWORD}
+
+sentinel:
+	docker-compose exec sentinel1 redis-cli
+
+info:	
+	docker-compose exec primary redis-cli --pass ${STRONG_PASSWORD} info replication
+
+infos:	
+	docker-compose exec sentinel1 redis-cli SENTINEL get-master-addr-by-name myprimary
+
+config:
+	nano .env
+```
+
+#### docker-compose.yml 
+```
+version: "3"
+
+networks:
+  re_replication:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.1.0/24"
+
+services:
+  # Primary
+  primary:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6379:6379
+    container_name: primary
+    restart: unless-stopped    
+    volumes:
+      - ./conf/primary:/usr/local/etc/redis:ro
+      - ./6379:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.11
+
+  # Replica 1
+  replica1:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6380:6379
+    container_name: replica1
+    restart: unless-stopped    
+    volumes:
+      - ./conf/replica:/usr/local/etc/redis:ro
+      - ./6380:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.12
+    depends_on:
+        - primary
+
+  # Replica 2
+  replica2:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 6381:6379
+    container_name: replica2
+    restart: unless-stopped    
+    volumes:
+      - ./conf/replica:/usr/local/etc/redis:ro
+      - ./6381:/data:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.13
+    depends_on:
+        - primary
+
+# Sentinel 1
+  sentinel1:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 5000:6379
+    container_name: sentinel1
+    restart: unless-stopped    
+    volumes:
+      - ./5000:/usr/local/etc/redis:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--sentinel"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.181
+    depends_on:
+        - primary
+        - replica1
+        - replica2
+
+# Sentinel 2
+  sentinel2:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 5001:6379
+    container_name: sentinel2
+    restart: unless-stopped    
+    volumes:
+      - ./5001:/usr/local/etc/redis:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--sentinel"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.182
+    depends_on:
+        - primary
+        - replica1
+        - replica2
+
+# Sentinel 3
+  sentinel3:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 5002:6379
+    container_name: sentinel3
+    restart: unless-stopped    
+    volumes:
+      - ./5002:/usr/local/etc/redis:rw
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--sentinel"]
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.183
+    depends_on:
+        - primary
+        - replica1
+        - replica2
+
+# Redis Insight
+  redisinsight:
+    image: redis/redisinsight:2.50
+    container_name: redisinsight
+    ports:
+      - 5540:5540
+    restart: unless-stopped    
+    volumes:
+      - ./5540:/data:rw
+    networks:
+      re_replication:
+        ipv4_address: 192.168.1.198
+    depends_on:
+        - primary
+        - replica1
+        - replica2
+
+```
+
+
+### VIII. Clustering In Redis
+Argument: 
+Clustering should be considered and planned in advance and might be overpowered for small and medium project. It can be scaled up or down but *resharding* is a non-trivial issue 
+
+```
+mkdir 7000 7001 7002 7003/ 7004 7005 5540
+```
+
+#### conf/redis.conf
 ```
 # redis.conf file
 
@@ -762,7 +1140,7 @@ protected-mode no
 stop-writes-on-bgsave-error yes
 ```
 
-.env 
+#### .env 
 ```
 # image name
 IMAGE_NAME=redis/redis-stack-server
@@ -771,7 +1149,7 @@ IMAGE_NAME=redis/redis-stack-server
 IMAGE_VERSION=6.2.6-v12
 ```
 
-Makefile
+#### Makefile
 ```
 #
 # Import and expose environment variables
@@ -845,7 +1223,7 @@ config:
 	nano .env
 ```
 
-docker-compose.yml
+#### docker-compose.yml
 ```
 version: "3"
 
@@ -858,7 +1236,7 @@ networks:
         - subnet: "192.168.1.0/24"
 
 services:
-  #Node 1
+  # Node 1
   re1:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -873,7 +1251,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.11
 
-  #Node 2
+  # Node 2
   re2:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -888,7 +1266,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.12
 
-  #Node 3
+  # Node 3
   re3:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -903,7 +1281,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.13
 
-#Node 4
+# Node 4
   re4:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -918,7 +1296,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.14
 
-#Node 5
+# Node 5
   re5:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -933,7 +1311,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.15
 
-#Node 6
+# Node 6
   re6:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     ports:
@@ -948,7 +1326,7 @@ services:
       re_cluster:
         ipv4_address: 192.168.1.16
 
-#Creator
+# Creator
   creator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}
     container_name: creator
@@ -1001,7 +1379,7 @@ services:
 ![alt redis insight](cluster-docker/img/redis_insight.png)
 
 
-### VIII. Summary 
+### IX. Summary 
 And this concludes my Redis collection: 
 
 1. [Redis Stack aggregation pipeline, 2024/03/20](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/README.md)
@@ -1018,7 +1396,7 @@ And this concludes my Redis collection:
 Unless... unless somwthing fanciful emerges in my brain... 
 
 
-### IX. Bibliography 
+### X. Bibliography 
 1. [Running Redis at scale, Redis University](https://redis.io/university/courses/ru301/)
 2. [Redis configuration file example](https://redis.io/docs/latest/operate/oss_and_stack/management/config-file/)
 3. [Redis replication](https://redis.io/docs/latest/operate/oss_and_stack/management/replication/)
