@@ -1389,7 +1389,7 @@ services:
 
 
 ### IX. Summary 
-And this concludes my Redis collection: 
+And this pretty much concludes my Redis collection: 
 
 1. [Redis Stack aggregation pipeline, 2024/03/20](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/README.md)
 2. [Thinking in Redis, 2024/04/01](https://github.com/Albert0i/Redis-Stack-Tutorial/blob/main/docdb.md)
