@@ -386,7 +386,7 @@ While the cost of enabling latency monitoring is near zero and memory requiremen
 #### Monitoring Tools
 There are many open source monitoring tools and services to visualize your Redis metrics - some of which also provide alerting capabilities.
 
-One example of this is the Redis Data Source for Grafana. It is a Grafana plug-in that allows users to connect to the Redis database and build dashboards to easily observe Redis data. It provides an out-of-the-box predefined dashboard but also lets you build customized dashboards tuned to your specific needs.
+One example of this is the [Redis Data Source for Grafana](https://grafana.com/grafana/plugins/redis-datasource/). It is a Grafana plug-in that allows users to connect to the Redis database and build dashboards to easily observe Redis data. It provides an out-of-the-box predefined dashboard but also lets you build customized dashboards tuned to your specific needs.
 
 
 ### III. Getting Redis Statistics
@@ -1106,6 +1106,18 @@ services:
 
 ```
 
+![alt make](replication-docker/img/make_help.png)
+
+![alt make up ps](replication-docker/img/make_up_ps.png)
+
+![alt make info](replication-docker/img/make_info.png)
+
+![alt primary down](replication-docker/img/primary_down.png)
+
+![alt failover log](replication-docker/img/failover_log.png)
+
+![alt redis insight](replication-docker/img/redisinsight-1.png)
+
 
 ### VIII. Clustering In Redis
 Argument: 
@@ -1410,7 +1422,36 @@ Unless... unless somwthing fanciful emerges in my brain...
 
 
 ### Epilogue 
-> Topology (from the Greek words τόπος, 'place, location', and λόγος, 'study') is the part of mathematics concerned with the properties of a geometric object that are preserved under continuous deformations, such as stretching, twisting, crumpling, and bending; that is, without closing holes, opening holes, tearing, gluing, or passing through itself.
+Relational database is a good thing but is not always the best for everythng. That's why the idea of [modernize database](https://redis.io/blog/3-reasons-your-mysql-db-needs-redis/) emerges. It simply means to incorporate Redis, or something like that, to boost performance in order to meet new challenging requirements of modern applications. 
 
+```
+THE CONCLUSION TO PART II
+
+A little child, a limber elf,
+Singing, dancing to itself,
+A fairy thing with red round cheeks,
+That always finds, and never seeks,
+Makes such a vision to the sight
+As fills a father's eyes with light;
+
+And pleasures flow in so thick and fast
+Upon his heart, that he at last
+Must needs express his love's excess
+With words of unmeant bitterness.
+Perhaps 'tis pretty to force together
+Thoughts so all unlike each other;
+
+To mutter and mock a broken charm,
+To dally with wrong that does no harm.
+Perhaps 'tis tender too and pretty
+At each wild word to feel within
+A sweet recoil of love and pity.
+
+And what, if in a world of sin
+(O sorrow and shame should this be true!)
+Such giddiness of heart and brain
+Comes seldom save from rage and pain,
+So talks as it 's most used to do.
+```
 
 ### EOF (2024/06/14)
