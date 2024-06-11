@@ -1,5 +1,5 @@
 
-Subject: 
+#### Subject
 City M, inhabitants are required to make a declaration of blah blah blah at least every 24 hours. Applicants will first visit a web page, fill in baskc information and confirm on certain terms, press submit button. Upon a successful submission, a pass code is granted. 
 
 All government departments, private sectors, facilities, banks, schools, stations etc are responsible for the checking and any illegal entering or reluctant to cooperate will be charged and put in prison. 
