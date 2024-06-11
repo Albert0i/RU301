@@ -733,7 +733,6 @@ To make Docker compatible with Redis Cluster, you need to use Docker's *host net
 
 
 ### VI. Single instance 
-Argument: 
 Always starts on single instance. When performance demands, try to add one or more replicas. 
 
 ```
@@ -794,7 +793,6 @@ services:
 
 
 ### VII. Replication with Sentinels 
-Argument: 
 Replication is the natural evolution in single instance setting. It is elastic and can be scaled up or down with ease at any time any place. 
 
 ```
@@ -1120,7 +1118,6 @@ services:
 
 
 ### VIII. Clustering In Redis
-Argument: 
 Clustering should be considered and planned conscientiously in advance and might be overpowered for small to medium project. It can be scaled up or down but *resharding* is a non-trivial issue. It can't be shrunk back to single instance nor replication. 
 
 ```
