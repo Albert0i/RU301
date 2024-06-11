@@ -8,6 +8,9 @@ Local population is around 60,000, peak hour is around 7:30AM to 8:30AM every mo
 
 Supposes every read/write operation in Redis is 1 ms. In the other words, a Redis server can serve 1000 read/write operations per second. 10,000 means at least 9 shards, 9 primary nodes and every primary node requires 2 replicas. A total of 27 nodes are needed. 
 
+> Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
+
+[What is Redis?](https://adevait.com/redis/what-is-redis)
 
 2024/06/11
 
@@ -39,6 +42,14 @@ In MySQL 8, there are several built-in mechanisms for caching data and improving
 4. Adaptive Hash Index: InnoDB also provides an adaptive hash index (AHI), which dynamically caches frequently accessed index pages in a hash table. The AHI can improve the performance of certain types of queries by reducing disk I/O for index lookups.
 
 It's worth noting that the effectiveness of caching mechanisms in MySQL 8 depends on various factors, such as the workload, the size of the data, and the available memory. It's important to carefully configure and monitor the caching settings to ensure optimal performance for your specific use case. Additionally, MySQL 8 provides various performance monitoring tools and status variables that can help analyze and tune the caching behavior to improve overall performance.
+
+[8.10.3 The MySQL Query Cache](https://dev.mysql.com/doc/refman/5.7/en/query-cache.html)
+
+[10.10.2.2 Multiple Key Caches](https://dev.mysql.com/doc/refman/8.4/en/multiple-key-caches.html)
+
+[17.5.1 Buffer Pool](https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html)
+
+[17.5.3 Adaptive Hash Index](https://dev.mysql.com/doc/refman/8.4/en/innodb-adaptive-hash.html)
 
 
 
