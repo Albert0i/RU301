@@ -795,7 +795,7 @@ services:
 
 ### VII. Replication with Sentinels 
 Argument: 
-Replication is the natural evolution in single instance setting when performance demands. It is elastic and can be scaled up or down with ease at any time any place.
+Replication is the natural evolution in single instance setting. It is elastic and can be scaled up or down with ease at any time any place. 
 
 ```
 mkdir 5000 5001 5002 5540 6379 6380 6381
@@ -1121,7 +1121,7 @@ services:
 
 ### VIII. Clustering In Redis
 Argument: 
-Clustering should be considered and planned in advance and might be overpowered for small and medium project. It can be scaled up or down but *resharding* is a non-trivial issue 
+Clustering should be considered and planned conscientiously in advance and might be overpowered for small to medium project. It can be scaled up or down but *resharding* is a non-trivial issue. It can't be shrunk back to single instance nor replication. 
 
 ```
 mkdir 7000 7001 7002 7003/ 7004 7005 5540
