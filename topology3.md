@@ -732,7 +732,7 @@ Docker uses a technique called *port mapping*: programs running inside Docker co
 To make Docker compatible with Redis Cluster, you need to use Docker's *host networking mode*. Please see the --net=host option in the [Docker documentation](https://docs.docker.com/engine/userguide/networking/dockernetworks/) for more information.
 
 
-### VI. Single instance 
+### VI. [Single instance](https://github.com/Albert0i/RU203.git)
 Always starts on single instance. When performance demands, try to add one or more replicas. 
 
 ```
@@ -792,7 +792,7 @@ services:
 ```
 
 
-### VII. Replication with Sentinels 
+### VII. [Replication with Sentinels](https://github.com/Albert0i/RU301/tree/main/replication-docker)
 Replication is the natural evolution in single instance setting. It is elastic and can be scaled up or down with ease at any time any place. 
 
 ```
@@ -1117,7 +1117,7 @@ services:
 ![alt redis insight](replication-docker/img/redisinsight-1.png)
 
 
-### VIII. Clustering In Redis
+### VIII. [Clustering In Redis](https://github.com/Albert0i/RU301/tree/main/cluster-docker)
 Clustering should be considered and planned conscientiously in advance and might be overpowered for small to medium project. It can be scaled up or down but *resharding* is a non-trivial issue. It can't be shrunk back to single instance nor replication. 
 
 ```
