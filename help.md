@@ -1,5 +1,6 @@
-redis-cli 7.2.4 (git:14/01/2024)
+### redis-cli 7.2.4 (git:14/01/2024)
 
+```
 Usage: redis-cli [OPTIONS] [cmd [arg [arg ...]]]
   -h <hostname>      Server hostname (default: 127.0.0.1).
   -p <port>          Server port (default: 6379).
@@ -110,4 +111,4 @@ Examples:
 When no command is given, redis-cli starts in interactive mode.
 Type "help" in interactive mode for information on available commands
 and settings.
-
+```
