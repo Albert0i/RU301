@@ -8,6 +8,8 @@ Local population is around 600,000, peak hour is around 7:30AM to 8:30AM every m
 
 It's well known that most of the Redis operationss are sub-millisecond level. Let's supposes every read/write operation spends 1 ms. That means a single Redis server serves 1000 read/write operations per second. 10,000 read/write per second means at least 10 servers is needed. Minus non-working people and infants, depending on available resources, 5 to 9 shards will suffice and survive our scenario. Let's use 5 shards, each shard includes one primary node and two replica nodes. A total of 15 nodes are needed to solve our issue in database level. 
 
+If a read/write operation in SQL server takes 50ms, a 500 nodes cluster will survive the expected performance... cut down to mininum, at least a 150 nodes cluster at least... 
+
 > Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
 
 [What is Redis?](https://adevait.com/redis/what-is-redis)
