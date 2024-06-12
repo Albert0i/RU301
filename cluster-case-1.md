@@ -24,7 +24,7 @@ Local population is around 600,000, application peak hour is in 7:30AM to 8:30AM
 
 
 #### System design 
-It's well known that most of the Redis operationss are sub-millisecond level. Let's supposes every read/write operation spends 1 ms. That means a single Redis server can serve 1000 read/write operations per second. 10,000 read/write per second means at least 10 servers is needed. Minus non-working people and infants, depending on available resources, 5 to 9 shards will suffice and survive our scenario. 7 shards is our reasonable estimation, each shard includes one primary node and two replica nodes. And thus a total of 21 nodes are used. 
+It's well known that most of the Redis operationss are sub-millisecond level. Let's suppose every read/write operation spends 1 ms. This means a single Redis server can serve 1000 read/write operations per second. 10,000 read/write means at least 10 servers is needed. Minus non-working people and infants etc, depending on resources available , 5 to 9 shards will suffice and survive our scenario. So, 7 shards is a reasonable estimation. Each shard includes one primary node and two replica nodes, a total of 21 nodes are used. 
 
 If every read/write operation in SQL server takes 50ms, a 500 nodes cluster is needed. Cut it to half, a cluster of 250 nodes... 
 
