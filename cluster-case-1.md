@@ -1,21 +1,41 @@
+### A self declaration system 
 
-#### Subject
-City M, inhabitants are required to make a declaration of blah blah blah in every 24 hours. Applicants first visit a web page, fill in baskc information, confirm on certain terms and press submit button. Upon a successful submission, a pass code is granted. 
+#### Objective 
+In city M, inhabitants are required to make self declaration of blah blah blah in every XX hours a day. Applicants first visit a web page, fill in basic information, confirm on certain terms and press submit button. Upon a successful submission, a pass code is granted. 
 
-All government departments, private sectors, facilities, banks, schools, stations etc are responsible for the checking and any illegal entering or reluctant to cooperate will be charged and put in prison. 
+![alt self declaration](/cluster-docker/img/health_declaration.png)
 
-Local population is around 600,000, peak hour is around 7:30AM to 8:30AM every morning. A database is required to sustain 10.000 read/write operation per second. Every inhabitant is expected to spend only a couple of minutes to finish with. 
+Basic information includes: 
+- name 
+- birthday 
+- gender
+- social security number 
+- address 
+- mobile phone
+- etc
 
-It's well known that most of the Redis operationss are sub-millisecond level. Let's supposes every read/write operation spends 1 ms. That means a single Redis server serves 1000 read/write operations per second. 10,000 read/write per second means at least 10 servers is needed. Minus non-working people and infants, depending on available resources, 5 to 9 shards will suffice and survive our scenario. Let's use 5 shards, each shard includes one primary node and two replica nodes. A total of 15 nodes are needed to solve our issue in database level. 
+Terms to confirm are subjected to change without notice. 
 
-If a read/write operation in SQL server takes 50ms, a 500 nodes cluster will survive the expected performance... cut down to mininum, at least a 150 nodes cluster at least... 
+
+#### preliminary analysis 
+All governmental departments, private sectors, local facilities, banks, schools, stations etc are responsible for the checking of validity of pass code. Any illegal trespassing or reluctant to fulfill the new regulations will be charged and detained for XX days. 
+
+Local population is around 600,000, application peak hour is in 7:30AM to 8:30AM every morning. A database is required to sustain 10.000 read/write operation per second. Every inhabitant is expected to spend a couple of minutes to finish with the declaration. 
+
+
+#### System design 
+It's well known that most of the Redis operationss are sub-millisecond level. Let's supposes every read/write operation spends 1 ms. That means a single Redis server can serve 1000 read/write operations per second. 10,000 read/write per second means at least 10 servers is needed. Minus non-working people and infants, depending on available resources, 5 to 9 shards will suffice and survive our scenario. 7 shards is our reasonable estimation, each shard includes one primary node and two replica nodes. And thus a total of 21 nodes are used. 
+
+If every read/write operation in SQL server takes 50ms, a 500 nodes cluster is needed. Cut it to half, a cluster of 250 nodes... 
+
+As the title implies, 600,000 reads and writes at least once a day. Obviously, caching the *data block*, *access plan* or *query result* has no use. It just doesn't help to cache the data of person A to facilitate the situation of person B. 
 
 > Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
 
 [What is Redis?](https://adevait.com/redis/what-is-redis)
 
-2024/06/14
 
+#### EOF (2024/06/14)
 
 
 ACID is an acronym that stands for Atomicity, Consistency, Isolation, and Durability. It represents a set of properties or characteristics that ensure reliability and integrity in database transactions. These properties are essential for maintaining data integrity and ensuring that database operations are performed reliably and consistently. Let's delve into each component of the ACID properties:
