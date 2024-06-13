@@ -1,30 +1,30 @@
 ### Case study: A self-declaration system 
 
 #### Objective 
-In city M, inhabitants are required to make self declaration of blah blah blah in every XX hours a day. Applicants first visit a web page, fill in basic information, confirm on certain terms and press submit button. Upon a successful submission, a pass code is granted. 
+In city M, inhabitants are required to make self-declaration of blah blah blah in every XX hours a day. Applicants first visit a web page, fill in basic information, confirm on certain terms and press submit button. Upon a successful submission, a pass code is granted. 
 
 ![alt self declaration](/cluster-docker/img/health_declaration.png)
 
 Basic information includes: 
 - name 
 - birthday 
-- gender
+- gender 
 - social security number 
 - address 
-- mobile phone number
-- etc
+- mobile phone number 
+- etc 
 
 Terms to confirm are subjected to change without notice. 
 
 
 #### Preliminary analysis 
-All governmental departments, private sectors, local facilities, banks, schools, stations etc are responsible for the checking of validity of pass code. Re-declaration has to be made upon pass code expiration. Any illegal trespassing or fail to comply with new regulation will be prosecuted and detained for XX days. 
+All governmental departments, private sectors, local facilities, banks, schools, stations etc are responsible for checking of validity of pass code. Re-declaration has to be made upon pass code expiration. Illegal trespassing or failure to comply with new regulation will be prosecuted and detained for XX days. 
 
-Local population is around 600,000, application peak hour is in 7:30AM to 8:30AM every morning. A database is required to sustain 10.000 read/write operation per second. Every inhabitant is expected to spend a couple of minutes to finish with the declaration. 
+Local population is around 600,000, peak hour for application is from 7:30 AM to 8:30 AM every morning. A database is required to sustain 10,000 read/write operations per second. Every inhabitant is expected to spend a couple of minutes to finish with the declaration. 
 
 
 #### System design 
-It's well known that most of the Redis operationss are sub-millisecond level. Let's suppose every read/write operation spends 1 ms. This means a single Redis server can serve 1000 read/write operations per second. 10,000 read/write means at least 10 servers are needed. Minus non-working people and infants etc, depending on resource available, 5 to 9 shards will suffice and survive our scenario. So, 7 shards is a reasonable estimation. Each shard includes one primary node and two replica nodes, a total of 21 nodes are used. 
+It's well known that Redis operationss are sub-millisecond level. Let's suppose every read/write operation spends 1 ms. This means a single Redis server can serve 1000 read/write operations per second. 10,000 read/write means at least 10 servers are needed. Minus non-working people and infants etc, depending on resource available, 5 to 9 shards will suffice and survive our scenario. So, 7 shards is a reasonable estimation. Each shard includes one primary node and two replica nodes, a total of 21 nodes are used. 
 
 If every read/write operation in SQL server takes 50ms, a 500 nodes cluster is needed. Cut it to half, a cluster of 250 nodes... 
 
@@ -33,6 +33,8 @@ As the title implies, 600,000 reads and writes at least once a day. Obviously, c
 > Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
 
 [What is Redis?](https://adevait.com/redis/what-is-redis)
+
+[MySQL 8.2 – transparent read/write splitting](https://dev.mysql.com/blog-archive/mysql-8-2-transparent-read-write-splitting/)
 
 
 #### EOF (2024/06/14)
