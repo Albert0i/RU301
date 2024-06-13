@@ -1,4 +1,4 @@
-### A self-declaration system 
+### Case study: A self-declaration system 
 
 #### Objective 
 In city M, inhabitants are required to make self declaration of blah blah blah in every XX hours a day. Applicants first visit a web page, fill in basic information, confirm on certain terms and press submit button. Upon a successful submission, a pass code is granted. 
@@ -17,7 +17,7 @@ Basic information includes:
 Terms to confirm are subjected to change without notice. 
 
 
-#### preliminary analysis 
+#### Preliminary analysis 
 All governmental departments, private sectors, local facilities, banks, schools, stations etc are responsible for the checking of validity of pass code. Re-declaration has to be made upon pass code expiration. Any illegal trespassing or fail to comply with new regulation will be prosecuted and detained for XX days. 
 
 Local population is around 600,000, application peak hour is in 7:30AM to 8:30AM every morning. A database is required to sustain 10.000 read/write operation per second. Every inhabitant is expected to spend a couple of minutes to finish with the declaration. 
