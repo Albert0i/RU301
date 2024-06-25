@@ -1401,6 +1401,9 @@ And this pretty much concludes my Redis collection:
 8. [Tune before you scale, 2024/06/05](https://github.com/Albert0i/RU301/blob/main/topology1.5.md)
 9. [On Topology, 2024/06/07](https://github.com/Albert0i/RU301/blob/main/topology2.md)
 10. [On Topology (cont), 2024/06/14](https://github.com/Albert0i/RU301/blob/main/topology3.md)
+11. [On Security, 2024/06/17](https://github.com/Albert0i/RU330/blob/main/security1.md)
+12. [On Security (cont.), 2024/06/21](https://github.com/Albert0i/RU330/blob/main/security2.md)
+13. [On Security (cont.), 2024/06/28](https://github.com/Albert0i/RU330/blob/main/security3.md)
 
 Unless... unless somwthing fanciful emerges in my brain... 
 
@@ -1451,4 +1454,5 @@ Comes seldom save from rage and pain,
 So talks as it 's most used to do.
 ```
 
+### EOF (2024/06/25)
 ### EOF (2024/06/14)
