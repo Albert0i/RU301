@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "sentinels": "nodemon src/sentinels.js", 
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodemon src/test.js", 
+    "basic": "basic-replica.bat", 
+    "sentinel": "sentinel-replica.bat"
   },
   "type": "module", 
   "keywords": [],
