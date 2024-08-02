@@ -30,6 +30,53 @@ If every read/write operation in SQL server takes 50ms, a 500 nodes cluster is n
 
 As the title implies, 600,000 reads and writes at least once a day. Obviously, caching the *data block*, *access plan* or *query result* has no use. It just doesn't help to cache the data of person A to facilitate the situation of person B. 
 
+
+#### System design (cont.)
+`sds:global:ssn` is a set to store 600,000 social security numbers. `SISMEMBER` is used to check validity of input number, which is an O(1) operation. 
+```
+SADD sds:global:ssn "765-43-2109" "654-32-1098" "543-21-0987" "432-10-9876" "321-09-8765" "210-98-7654" "109-87-6543" "098-76-5432" "987-65-4321" "876-54-3210"
+```
+
+`sds:citizen:<ssn>` is a hash to store individual citizen information.
+```
+HMSET sds:citizen:765-43-2109 name "Emily Brown" birthday "1988-02-10" gender "Female" address "789 Oak Avenue, Townsville, USA" mobile "+15551234567"
+
+HMSET sds:citizen:654-32-1098 name "Michael Johnson" birthday "1995-07-05" gender "Male" address "456 Pine Street, Cityville, USA" mobile "+16661234567"
+
+HMSET sds:citizen:543-21-0987 name "Sophia Rodriguez" birthday "1982-11-20" gender "Female" address "321 Cedar Lane, Villagetown, USA" mobile "+17771234567"
+
+HMSET sds:citizen:432-10-9876 name "Ethan Martinez" birthday "1979-04-15" gender "Male" address "123 Maple Road, Countryville, USA" mobile "+18881234567"
+
+HMSET sds:citizen:105 name "Olivia Wilson" birthday "1991-06-30" gender "Female" ssn "321-09-8765" address "654 Birch Street, Villageton, USA" mobile "+19991234567"
+
+HMSET sds:citizen:210-98-7654 name "Daniel Thompson" birthday "1980-08-25" gender "Male" address "987 Willow Lane, Citytown, USA" mobile "+12221234567"
+
+HMSET sds:citizen:109-87-6543 name "Ava Davis" birthday "1993-03-05" gender "Female" address "789 Elm Street, Countryside, USA" mobile "+13331234567"
+
+HMSET sds:citizen:098-76-5432 name "Alexander Garcia" birthday "1987-12-12" gender "Male" address "345 Oak Avenue, Downtown, USA" mobile "+14441234567"
+
+HMSET sds:citizen:987-65-4321 name "Isabella Hernandez" birthday "1986-01-08" gender "Female" address "567 Pine Street, Uptown, USA" mobile "+15551234567"
+
+HMSET sds:citizen:876-54-3210 name "William Young" birthday "1998-09-18" gender "Male" address "234 Elm Street, Outertown, USA" mobile "+16661234567"
+```
+
+If input number is valid, `HMGET` is used to retrive the personal data, which is O(N) where N is the number of fields being requested. show on screen and verity. 
+
+Then, terms on declaration are checked and confirmed by individual user. 
+
+At last, when user submit the form, 
+```
+HSET sds:citizen:765-43-2109 lastDeclareDate 20240802160521
+
+HMSET sds:citizen:765-43-2109:20240802160521 field1 value1 field2 value2 field3 value3...  
+```
+
+```
+SCAN 0 MATCH sds:citizen:765-43-2109:* COUNT 100 TYPE hash 
+```
+To find out all declaration of a person. 
+
+
 > Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
 
 [What is Redis?](https://adevait.com/redis/what-is-redis)
