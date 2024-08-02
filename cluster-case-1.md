@@ -74,7 +74,10 @@ HMSET sds:citizen:765-43-2109:20240802160521 field1 value1 field2 value2 field3 
 ```
 SCAN 0 MATCH sds:citizen:765-43-2109:* COUNT 100 TYPE hash 
 ```
-To find out all declaration of a person. 
+To find out all declaration of a person. or use list to keep track of each declaration chronically.
+```
+LPUSH sds:citizen:765-43-2109:declarations sds:citizen:765-43-2109:20240802160521
+```
 
 
 > Long story short, REDIS allows you to store key-value pairs on your RAM. Since accessing RAM is 150,000 times faster than accessing a disk, and 500 times faster than accessing SSD, it means speed.
