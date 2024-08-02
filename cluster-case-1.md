@@ -37,7 +37,7 @@ As the title implies, 600,000 reads and writes at least once a day. Obviously, c
 SADD sds:global:ssn "765-43-2109" "654-32-1098" "543-21-0987" "432-10-9876" "321-09-8765" "210-98-7654" "109-87-6543" "098-76-5432" "987-65-4321" "876-54-3210"
 ```
 
-`sds:citizen:<ssn>` is a hash to store individual citizen information.
+`sds:citizen:<ssn>` is a hash to store 600,000 basic information of individual citizen.
 ```
 HMSET sds:citizen:765-43-2109 name "Emily Brown" birthday "1988-02-10" gender "Female" address "789 Oak Avenue, Townsville, USA" mobile "+15551234567"
 
@@ -60,21 +60,18 @@ HMSET sds:citizen:987-65-4321 name "Isabella Hernandez" birthday "1986-01-08" ge
 HMSET sds:citizen:876-54-3210 name "William Young" birthday "1998-09-18" gender "Male" address "234 Elm Street, Outertown, USA" mobile "+16661234567"
 ```
 
-If input number is valid, `HMGET` is used to retrive the personal data, which is O(N) where N is the number of fields being requested. show on screen and verity. 
+If input number is valid, `HMGET` is used to retrive the user data, which is O(N) where N is the number of fields being requested. show on screen and verity. 
 
-Then, terms on declaration are checked and confirmed by individual user. 
+Then, terms on declaration are checked and confirmed by user. 
 
-At last, when user submit the form, 
+At last, user submit the form, 
 ```
 HSET sds:citizen:765-43-2109 lastDeclareDate 20240802160521
 
 HMSET sds:citizen:765-43-2109:20240802160521 field1 value1 field2 value2 field3 value3...  
 ```
 
-```
-SCAN 0 MATCH sds:citizen:765-43-2109:* COUNT 100 TYPE hash 
-```
-To find out all declaration of a person. or use list to keep track of each declaration chronically.
+A list to keep track of all declarations of individual user chronically. 
 ```
 LPUSH sds:citizen:765-43-2109:declarations sds:citizen:765-43-2109:20240802160521
 ```
